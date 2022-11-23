@@ -17,7 +17,7 @@ export class createHotelDto {
   @IsString()
   @IsNotEmpty()
   address: string;
-  
+
   @IsString()
   @IsNotEmpty()
   country: string;

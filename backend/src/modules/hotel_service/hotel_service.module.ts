@@ -4,6 +4,6 @@ import { HotelServiceController } from './hotel_service.controller';
 
 @Module({
   controllers: [HotelServiceController],
-  providers: [HotelServiceService]
+  providers: [HotelServiceService],
 })
 export class HotelServiceModule {}
