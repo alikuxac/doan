@@ -1,10 +1,16 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from './entities/user.entity';
 
 import { createUserDto, updateUserDto } from './dto/user.dto';
+
+import { comparePassword } from '@utils/utility';
 
 @Injectable()
 export class UserService {
@@ -66,5 +72,16 @@ export class UserService {
       throw new ConflictException('User with id does not exist');
     }
     return await this.userRepository.delete({ id: id });
+  }
+
+  async validateWithEmail(email: string, password: string) {
+    const checkExist = await this.userRepository.findOneBy({ email });
+    if (!checkExist) {
+      throw new ConflictException('User with username does not exist');
+    }
+    if (!comparePassword(password, checkExist.password)) {
+      throw new ForbiddenException('Wrong password');
+    }
+    return checkExist;
   }
 }

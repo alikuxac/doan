@@ -21,6 +21,7 @@
     "esModuleInterop": true,
     "paths": {
       "@modules/*": ["src/modules/*"],
+      "@utils/*": ["src/utils/*"],
     }
   }
 }
