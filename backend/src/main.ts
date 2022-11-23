@@ -1,0 +1,28 @@
+import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+
+import { json, urlencoded } from 'express';
+import compression from 'compression';
+
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+
+  app.enableCors();
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
+  app.use(compression());
+
+  const port = configService.get<number>('PORT') ?? 3000;
+
+  await app.listen(port, () => {
+    console.log('Server is running at port: ', port);
+  });
+}
+bootstrap().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
