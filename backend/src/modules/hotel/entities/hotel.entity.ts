@@ -1,6 +1,14 @@
-import { PrimaryGeneratedColumn, Column, Entity, OneToMany } from 'typeorm';
+import {
+  PrimaryGeneratedColumn,
+  Column,
+  Entity,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { Staff } from '@modules/staff/entities/staff.entity';
+import { HotelRoom } from './/hotel_room.entity';
 
 @Entity({ name: 'hotel' })
 export class Hotel {
@@ -22,6 +30,22 @@ export class Hotel {
   @Column({ name: 'country', default: 'VN' })
   country: string;
 
-  @OneToMany(() => Staff, (staff) => staff.hotel, { eager: true })
+  @OneToMany(() => Staff, (staff) => staff.hotel, {
+    eager: true,
+    cascade: true,
+    onDelete: 'SET NULL',
+  })
   staffs: Staff[];
+
+  @OneToMany(() => HotelRoom, (room) => room.hotel, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  rooms: HotelRoom[];
+
+  @CreateDateColumn()
+  createAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 }

@@ -2,8 +2,8 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { Hotel } from './entities/hotel.entity';
-import { createHotelDto, updateHotelDto } from './dto/hotel.dto';
+import { Hotel } from '../entities/hotel.entity';
+import { createHotelDto, updateHotelDto } from '../dto/hotel.dto';
 
 @Injectable()
 export class HotelService {
@@ -11,6 +11,11 @@ export class HotelService {
     @InjectRepository(Hotel)
     private readonly hotelRepository: Repository<Hotel>,
   ) {}
+
+  public getHotelRepository() {
+    return this.hotelRepository;
+  }
+
   async create(dto: createHotelDto) {
     const checkExist = await this.hotelRepository.findOne({
       where: [

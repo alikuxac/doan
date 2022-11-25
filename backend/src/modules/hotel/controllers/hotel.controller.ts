@@ -7,8 +7,8 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { HotelService } from './hotel.service';
-import { createHotelDto, updateHotelDto } from './dto/hotel.dto';
+import { HotelService } from '../services/hotel.service';
+import { createHotelDto, updateHotelDto } from '../dto/hotel.dto';
 
 @Controller('hotel')
 export class HotelController {
