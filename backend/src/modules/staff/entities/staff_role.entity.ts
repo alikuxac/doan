@@ -29,7 +29,7 @@ export class StaffRole {
   @Column({ name: 'position', type: 'integer', default: 0 })
   position: number;
 
-  @OneToMany(() => Staff, (staff) => staff.role)
+  @OneToMany(() => Staff, (staff) => staff.role, { eager: true })
   staff: Staff[];
 
   @CreateDateColumn()

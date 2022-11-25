@@ -23,6 +23,8 @@ export class Staff {
 
   @ManyToOne(() => StaffRole, (staffRole) => staffRole.staff, {
     eager: true,
+    cascade: true,
+    onDelete: 'SET NULL',
   })
   role: StaffRole;
 
@@ -30,7 +32,10 @@ export class Staff {
   @JoinColumn({ referencedColumnName: 'id' })
   user: User;
 
-  @ManyToOne(() => Hotel, (hotel) => hotel.staffs)
+  @ManyToOne(() => Hotel, (hotel) => hotel.staffs, {
+    cascade: true,
+    onDelete: 'SET NULL',
+  })
   hotel: Hotel;
 
   @CreateDateColumn()
