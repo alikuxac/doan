@@ -12,6 +12,7 @@ import {
 import bcrypt from 'bcryptjs';
 
 import { Staff } from '@modules/staff/entities/staff.entity';
+import { UserRole } from '../user.enum';
 
 @Entity()
 export class User {
@@ -65,6 +66,12 @@ export class User {
     nullable: false,
   })
   last_active: Date;
+
+  @Column({ name: 'role', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
+
+  @Column({ name: 'isAdmin', type: 'boolean', default: false })
+  isAdmin: boolean;
 
   @CreateDateColumn()
   created_date: Date;

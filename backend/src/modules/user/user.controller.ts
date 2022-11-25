@@ -8,34 +8,39 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { createUserDto, updateUserDto } from './dto/user.dto';
+import { assignRoleDto, createUserDto, updateUserDto } from './dto/user.dto';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() dto: createUserDto) {
-    return this.userService.create(dto);
+  async create(@Body() dto: createUserDto) {
+    return await this.userService.create(dto);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.userService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: updateUserDto) {
-    return this.userService.update(+id, dto);
+  async update(@Param('id') id: string, @Body() dto: updateUserDto) {
+    return await this.userService.update(+id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return await this.userService.remove(+id);
+  }
+
+  @Post(':id/role')
+  async changeRole(@Param('id') id: string, @Body() dto: assignRoleDto) {
+    return await this.userService.changeRole(+id, dto);
   }
 }

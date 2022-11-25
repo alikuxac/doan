@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from './entities/user.entity';
 
-import { createUserDto, updateUserDto } from './dto/user.dto';
+import { createUserDto, updateUserDto, assignRoleDto } from './dto/user.dto';
 
 import { comparePassword } from '@utils/utility';
 
@@ -72,6 +72,14 @@ export class UserService {
       throw new ConflictException('User with id does not exist');
     }
     return await this.userRepository.delete({ id: id });
+  }
+
+  async changeRole(id: number, dto: assignRoleDto) {
+    const checkExist = await this.userRepository.findOneBy({ id });
+    if (!checkExist) {
+      throw new ConflictException('User with id does not exist');
+    }
+    return await this.userRepository.update(id, { role: dto.role });
   }
 
   async validateWithEmail(email: string, password: string) {
