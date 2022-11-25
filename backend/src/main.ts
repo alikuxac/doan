@@ -5,6 +5,7 @@ import { json, urlencoded } from 'express';
 import compression from 'compression';
 
 import { AppModule } from './app.module';
+import { setupSwagger } from './swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.use(compression());
+
+  setupSwagger(app);
 
   const port = configService.get<number>('PORT') ?? 3000;
 
