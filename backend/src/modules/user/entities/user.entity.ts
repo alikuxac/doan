@@ -80,7 +80,7 @@ export class User {
     eager: true,
   })
   @JoinColumn({ name: 'staffId', referencedColumnName: 'id' })
-  staff: Staff | null;
+  staff: Staff;
 
   @BeforeInsert()
   async hashPassword() {
@@ -88,8 +88,6 @@ export class User {
       this.password = await bcrypt.hash(this.password, 10);
     }
     this.last_active = new Date();
-    this.created_date = new Date();
-    this.updated_date = new Date();
   }
 
   @BeforeUpdate()
@@ -97,6 +95,5 @@ export class User {
     if (this.password) {
       this.password = await bcrypt.hash(this.password, 10);
     }
-    this.updated_date = new Date();
   }
 }
