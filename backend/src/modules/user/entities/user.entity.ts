@@ -20,15 +20,6 @@ export class User {
   id: number;
 
   @Column({
-    name: 'phone_number',
-    type: 'varchar',
-    length: 20,
-    nullable: false,
-    unique: true,
-  })
-  phoneNumber: string;
-
-  @Column({
     name: 'email',
     type: 'varchar',
     length: 100,
@@ -58,7 +49,13 @@ export class User {
   @Column({ type: 'varchar', length: 100, nullable: true, default: null })
   displayName: string | null;
 
-  @Column({ name: 'phone', type: 'varchar', length: 20, nullable: true })
+  @Column({
+    name: 'phone',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+    default: null,
+  })
   phone: string | null;
 
   @Column({
