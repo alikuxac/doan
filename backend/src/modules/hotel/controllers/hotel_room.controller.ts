@@ -1,24 +1,22 @@
 import {
   Controller,
   Get,
-  // Post,
-  // Body,
-  // Patch,
+  Post,
+  Body,
+  Patch,
   Param,
   Delete,
 } from '@nestjs/common';
 import { HotelRoomService } from '../services/hotel_room.service';
-// import { CreateHotelRoomDto } from '../../hotel_room/dto/create-hotel_room.dto';
-// import { UpdateHotelRoomDto } from '../../hotel_room/dto/update-hotel_room.dto';
-
-@Controller('hotel-room')
+import { createHotelRoomDto, updateHotelRoomDto } from '../dto/hotel_room.dto';
+@Controller('hotel/room')
 export class HotelRoomController {
   constructor(private readonly hotelRoomService: HotelRoomService) {}
 
-  // @Post()
-  // create(@Body() createHotelRoomDto: CreateHotelRoomDto) {
-  //   return this.hotelRoomService.create(createHotelRoomDto);
-  // }
+  @Post()
+  create(@Body() dto: createHotelRoomDto) {
+    return this.hotelRoomService.create(dto);
+  }
 
   @Get()
   findAll() {
@@ -30,13 +28,10 @@ export class HotelRoomController {
     return this.hotelRoomService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(
-  //   @Param('id') id: string,
-  //   @Body() updateHotelRoomDto: UpdateHotelRoomDto,
-  // ) {
-  //   return this.hotelRoomService.update(+id, updateHotelRoomDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: updateHotelRoomDto) {
+    return this.hotelRoomService.update(+id, dto);
+  }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

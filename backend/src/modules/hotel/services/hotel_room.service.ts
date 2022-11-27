@@ -6,7 +6,6 @@ import { createHotelRoomDto, updateHotelRoomDto } from '../dto/hotel_room.dto';
 import { HotelRoom } from '../entities/hotel_room.entity';
 
 import { HotelService } from './hotel.service';
-import { HotelRoomTypeService } from './hotel_room_type.service';
 
 @Injectable()
 export class HotelRoomService {
@@ -14,7 +13,6 @@ export class HotelRoomService {
     @InjectRepository(HotelRoom)
     private readonly hotelRoomRepository: Repository<HotelRoom>,
     private readonly hotelService: HotelService,
-    private readonly hotelRoomTypeService: HotelRoomTypeService,
   ) {}
 
   private async getHotel(id: number) {
@@ -23,23 +21,15 @@ export class HotelRoomService {
     return checkHotel;
   }
 
-  private async getType(id: number) {
-    const checkType = await this.hotelRoomTypeService.findOne(id);
-    if (!checkType) throw new ConflictException('Invalid type id');
-    return checkType;
-  }
-
   async create(dto: createHotelRoomDto) {
     const hotel = await this.getHotel(dto.hotelId);
-    const type = await this.getType(dto.roomTypeId);
 
     const newRoom = this.hotelRoomRepository.create({
       ...dto,
-      type,
+      hotel: hotel,
     });
-    hotel.rooms.push(newRoom);
 
-    return await this.hotelService.getHotelRepository().save(hotel);
+    return await this.hotelRoomRepository.save(newRoom);
   }
 
   async findAll(limit = 10, skip = 10) {
@@ -59,6 +49,9 @@ export class HotelRoomService {
     checkHotelRoom.name = dto.name ?? checkHotelRoom.name;
     checkHotelRoom.description = dto.description ?? checkHotelRoom.description;
     checkHotelRoom.room_number = dto.room_number ?? checkHotelRoom.room_number;
+    checkHotelRoom.status = dto.status ?? checkHotelRoom.status;
+
+    return await this.hotelRoomRepository.save(checkHotelRoom);
   }
 
   async remove(id: number) {

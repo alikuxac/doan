@@ -1,5 +1,13 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsEnum,
+} from 'class-validator';
+
+import { HotelRoomStatus, HotelRoomType } from '../enum/hotel_room.enum';
 
 export class createHotelRoomDto {
   @IsNumber()
@@ -21,6 +29,14 @@ export class createHotelRoomDto {
   @IsNumber()
   @IsNotEmpty()
   room_number: number;
+
+  @IsEnum(HotelRoomStatus)
+  @IsOptional()
+  status: HotelRoomStatus;
+
+  @IsEnum(HotelRoomType)
+  @IsOptional()
+  type: HotelRoomType;
 }
 
 export class updateHotelRoomDto extends PartialType(createHotelRoomDto) {}

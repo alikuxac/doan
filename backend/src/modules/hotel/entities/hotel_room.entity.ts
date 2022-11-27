@@ -3,14 +3,16 @@ import {
   Column,
   Entity,
   ManyToOne,
-  OneToOne,
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
-import { HotelRoomType } from './hotel_room_type.entity';
+import {
+  HotelRoomStatus,
+  HotelRoomType as RoomType,
+} from '../enum/hotel_room.enum';
 
 @Entity({ name: 'hotel_room' })
 export class HotelRoom {
@@ -29,16 +31,37 @@ export class HotelRoom {
   @Column({ name: 'price', type: 'decimal' })
   price: number;
 
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: HotelRoomStatus,
+    default: HotelRoomStatus.EMPTY,
+  })
+  status: HotelRoomStatus;
+
+  @Column({ nullable: true })
+  hotelId: number;
+
   @ManyToOne(() => Hotel, (hotel) => hotel.rooms, { eager: true })
+  @JoinColumn()
   hotel: Hotel;
 
-  @OneToOne(() => HotelRoomType, {
-    eager: true,
-    onDelete: 'SET NULL',
-    nullable: true,
+  @Column({
+    name: 'type',
+    type: 'enum',
+    enum: RoomType,
+    default: RoomType.SINGLE,
   })
-  @JoinColumn()
-  type: HotelRoomType;
+  type: RoomType;
+
+  @Column({ name: 'bed', type: 'integer' })
+  bed: number;
+
+  @Column({ name: 'max_people', type: 'integer' })
+  max_people: number;
+
+  @Column({ name: 'extra_bed', type: 'bool', default: false })
+  extra_bed: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
