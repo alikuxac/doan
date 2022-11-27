@@ -32,7 +32,6 @@ export class Hotel {
 
   @OneToMany(() => Staff, (staff) => staff.hotel, {
     eager: true,
-    cascade: true,
     onDelete: 'SET NULL',
   })
   staffs: Staff[];
