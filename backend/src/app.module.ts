@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 
 import Joi from 'joi';
 
-// import { AuthModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { StaffModule } from './modules/staff/staff.module';
 // import { ReservationsModule } from './modules/reservations/reservations.module';
@@ -85,7 +85,7 @@ import { SharedModule } from './modules/shared/shared.module';
     //   }),
     // }),
 
-    // AuthModule,
+    AuthModule,
     UserModule,
     StaffModule,
     SharedModule,
