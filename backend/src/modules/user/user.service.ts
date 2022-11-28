@@ -8,14 +8,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from './entities/user.entity';
 
-import { createUserDto, updateUserDto, assignRoleDto } from './dto/user.dto';
+import {
+  createUserDto,
+  updateUserDto,
+  assignRoleDto,
+  changeHotelDto,
+} from './dto/user.dto';
 
 import { comparePassword } from '@utils/utility';
+import { HotelService } from '@modules/hotel/services';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    private readonly hotelService: HotelService,
   ) {}
 
   async getTotalUsers() {
@@ -32,12 +39,17 @@ export class UserService {
     });
     if (checkExist)
       throw new ConflictException('User with email or username exist');
+    const hotel = dto.hotelId
+      ? await this.hotelService.findOne(dto.hotelId)
+      : null;
     const newUser = this.userRepository.create({
       username: dto.username,
       phone: dto.phone,
       email: dto.email,
       firstName: dto.firstName,
       lastName: dto.lastName,
+      password: dto.password,
+      hotel,
     });
     return await this.userRepository.save(newUser);
   }
@@ -91,5 +103,21 @@ export class UserService {
       throw new ForbiddenException('Wrong password');
     }
     return checkExist;
+  }
+
+  async changeHotel(id: number, dto: changeHotelDto) {
+    const checkExist = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!checkExist) {
+      throw new ConflictException('User does not exist');
+    }
+    const checkHotelExist = await this.hotelService.findOne(dto.hotelId);
+    if (!checkHotelExist) {
+      throw new ConflictException('This hotel does not exist');
+    }
+    checkExist.hotel = checkHotelExist;
+
+    return await this.userRepository.save(checkExist);
   }
 }

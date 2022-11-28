@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsEnum,
+  IsNumber,
 } from 'class-validator';
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -61,6 +62,11 @@ export class createUserDto {
   })
   password?: string;
 
+  @IsNumber()
+  @IsOptional()
+  @ApiPropertyOptional()
+  hotelId?: number;
+
   @IsEnum(UserRole)
   @IsOptional()
   @ApiPropertyOptional({
@@ -87,4 +93,11 @@ export class assignRoleDto {
     enumName: 'User role',
   })
   role: UserRole;
+}
+
+export class changeHotelDto {
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty({ name: 'Hotel Id' })
+  hotelId: number;
 }

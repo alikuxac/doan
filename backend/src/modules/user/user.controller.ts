@@ -10,7 +10,12 @@ import {
 import { ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
 
 import { UserService } from './user.service';
-import { assignRoleDto, createUserDto, updateUserDto } from './dto/user.dto';
+import {
+  assignRoleDto,
+  changeHotelDto,
+  createUserDto,
+  updateUserDto,
+} from './dto/user.dto';
 
 @Controller('user')
 @ApiTags('user')
@@ -46,9 +51,15 @@ export class UserController {
     return await this.userService.remove(+id);
   }
 
-  @Post(':id/role')
+  @Patch(':id/role')
   @ApiParam({ name: 'id' })
   async changeRole(@Param('id') id: string, @Body() dto: assignRoleDto) {
     return await this.userService.changeRole(+id, dto);
+  }
+
+  @Patch(':id/hotel')
+  @ApiParam({ name: 'id' })
+  async changeHotel(@Param('id') id: string, @Body() dto: changeHotelDto) {
+    return await this.userService.changeHotel(+id, dto);
   }
 }

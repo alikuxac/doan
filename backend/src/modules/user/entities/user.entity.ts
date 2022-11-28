@@ -7,11 +7,12 @@ import {
   JoinColumn,
   BeforeUpdate,
   BeforeInsert,
-  OneToOne,
+  // OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import bcrypt from 'bcryptjs';
 
-import { Staff } from '@modules/staff/entities/staff.entity';
+import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import { UserRole } from '../user.enum';
 
 @Entity()
@@ -23,7 +24,6 @@ export class User {
     name: 'email',
     type: 'varchar',
     length: 100,
-    nullable: false,
     unique: true,
   })
   email: string;
@@ -32,7 +32,6 @@ export class User {
     name: 'username',
     type: 'varchar',
     length: 50,
-    nullable: false,
     unique: true,
   })
   username: string;
@@ -76,15 +75,14 @@ export class User {
   @UpdateDateColumn()
   updated_date: Date;
 
-  @OneToOne(() => Staff, {
+  @ManyToOne(() => Hotel, (hotel) => hotel.users, {
     nullable: true,
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
     cascade: true,
     eager: true,
+    onDelete: 'SET NULL',
   })
-  @JoinColumn({ name: 'staffId', referencedColumnName: 'id' })
-  staff: Staff;
+  @JoinColumn()
+  hotel: Hotel | null;
 
   @BeforeInsert()
   async hashPassword() {
