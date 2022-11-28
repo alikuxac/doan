@@ -24,15 +24,8 @@ async function bootstrap() {
   await app.listen(port, () => {
     console.log('Server is running at port: ', port);
   });
-
-  // if (module.hot) {
-  //   module.hot.accept();
-  //   module.hot.dispose(() => app.close());
-  // }
 }
 bootstrap().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-
-// declare const module: any;
