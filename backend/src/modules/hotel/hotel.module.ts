@@ -7,5 +7,6 @@ import { hotelArray } from './entities/';
   imports: [TypeOrmModule.forFeature([...hotelArray])],
   controllers: [...hotelArrayController],
   providers: [...hotelArrayServices],
+  exports: [...hotelArrayServices],
 })
 export class HotelModule {}

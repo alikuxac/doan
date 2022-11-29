@@ -7,13 +7,14 @@ import {
   JoinColumn,
   BeforeUpdate,
   BeforeInsert,
-  // OneToOne,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import bcrypt from 'bcryptjs';
 
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import { UserRole } from '../user.enum';
+import { Reservation } from '@modules/reservations/entities/reservation.entity';
 
 @Entity()
 export class User {
@@ -83,6 +84,16 @@ export class User {
   })
   @JoinColumn()
   hotel: Hotel | null;
+
+  @OneToMany(() => Reservation, (res) => res.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+    nullable: false,
+  })
+  reservations: Reservation[];
+
+  @OneToMany(() => Hotel, (hotel) => hotel.admin)
+  admins: Hotel[];
 
   @BeforeInsert()
   async hashPassword() {

@@ -5,10 +5,13 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
-import { Staff } from '@modules/staff/entities/staff.entity';
 import { HotelRoom } from './/hotel_room.entity';
+import { User } from '@modules/user/entities/user.entity';
+import { Reservation } from '@modules/reservations/entities/reservation.entity';
 
 @Entity({ name: 'hotel' })
 export class Hotel {
@@ -30,17 +33,25 @@ export class Hotel {
   @Column({ name: 'country', default: 'VN' })
   country: string;
 
-  @OneToMany(() => Staff, (staff) => staff.hotel, {
-    eager: true,
+  @ManyToOne(() => User, (user) => user.admins, { onDelete: 'SET NULL' })
+  @JoinColumn()
+  admin: User;
+
+  @OneToMany(() => User, (user) => user.hotel, {
     onDelete: 'SET NULL',
   })
-  staffs: Staff[];
+  users: User[];
 
   @OneToMany(() => HotelRoom, (room) => room.hotel, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   rooms: HotelRoom[];
+
+  @OneToMany(() => Reservation, (res) => res.hotel, {
+    onDelete: 'CASCADE',
+  })
+  reservations: Reservation[];
 
   @CreateDateColumn()
   createAt: Date;
