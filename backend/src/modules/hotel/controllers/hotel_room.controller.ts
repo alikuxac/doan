@@ -9,32 +9,39 @@ import {
 } from '@nestjs/common';
 import { HotelRoomService } from '../services/hotel_room.service';
 import { createHotelRoomDto, updateHotelRoomDto } from '../dto/hotel_room.dto';
+import { ApiTags, ApiBody, ApiParam } from '@nestjs/swagger';
+
 @Controller('hotel/room')
+@ApiTags('Hotel Room')
 export class HotelRoomController {
   constructor(private readonly hotelRoomService: HotelRoomService) {}
 
   @Post()
-  create(@Body() dto: createHotelRoomDto) {
-    return this.hotelRoomService.create(dto);
+  @ApiBody({ type: createHotelRoomDto })
+  async create(@Body() dto: createHotelRoomDto) {
+    return await this.hotelRoomService.create(dto);
   }
 
   @Get()
-  findAll() {
-    return this.hotelRoomService.findAll();
+  async findAll() {
+    return await this.hotelRoomService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.hotelRoomService.findOne(+id);
+  @ApiParam({ name: 'id' })
+  async findOne(@Param('id') id: string) {
+    return await this.hotelRoomService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: updateHotelRoomDto) {
-    return this.hotelRoomService.update(+id, dto);
+  @ApiParam({ name: 'id' })
+  async update(@Param('id') id: string, @Body() dto: updateHotelRoomDto) {
+    return await this.hotelRoomService.update(+id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.hotelRoomService.remove(+id);
+  @ApiParam({ name: 'id' })
+  async remove(@Param('id') id: string) {
+    return await this.hotelRoomService.remove(+id);
   }
 }

@@ -6,36 +6,44 @@ import {
   IsString,
   IsEnum,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 import { HotelRoomStatus, HotelRoomType } from '../enum/hotel_room.enum';
 
 export class createHotelRoomDto {
   @IsNumber()
   @IsNotEmpty()
+  @ApiProperty()
   hotelId: number;
 
   @IsString()
   @IsNotEmpty()
+  @ApiProperty()
   name: string;
 
   @IsString()
   @IsOptional()
+  @ApiProperty()
   description: string;
 
   @IsNumber()
   @IsNotEmpty()
+  @ApiProperty()
   roomTypeId: number;
 
   @IsNumber()
   @IsNotEmpty()
+  @ApiProperty()
   room_number: number;
 
   @IsEnum(HotelRoomStatus)
   @IsOptional()
+  @ApiProperty({ enum: HotelRoomStatus })
   status: HotelRoomStatus;
 
   @IsEnum(HotelRoomType)
   @IsOptional()
+  @ApiProperty({ enum: HotelRoomType })
   type: HotelRoomType;
 }
 
