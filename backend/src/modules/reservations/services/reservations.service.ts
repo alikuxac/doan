@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotAcceptableException,
 } from '@nestjs/common';
@@ -50,7 +49,7 @@ export class ReservationsService {
     }
 
     const hotel = await this.hotelService.findOne(dto.hotelId);
-    if (hotel) throw new ConflictException('Invlid hotel id');
+    if (hotel) throw new BadRequestException('Invlid hotel id');
     const newReservation = this.reservationRepository.create({
       ...dto,
       hotel,
@@ -75,7 +74,7 @@ export class ReservationsService {
 
   async update(id: number, dto: updateReservationDto) {
     const checkExist = await this.reservationRepository.findOneBy({ id });
-    if (!checkExist) throw new ConflictException('Invalid id');
+    if (!checkExist) throw new BadRequestException('Invalid id');
 
     checkExist.checkIn = dto.checkIn ?? checkExist.checkIn;
     checkExist.checkOut = dto.checkOut ?? checkExist.checkOut;

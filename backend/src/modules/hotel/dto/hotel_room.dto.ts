@@ -11,11 +11,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { HotelRoomStatus, HotelRoomType } from '../enum/hotel_room.enum';
 
 export class createHotelRoomDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  hotelId: number;
-
   @IsString()
   @IsNotEmpty()
   @ApiProperty()

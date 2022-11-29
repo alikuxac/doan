@@ -1,6 +1,6 @@
 import {
   Injectable,
-  ConflictException,
+  BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
@@ -23,7 +23,7 @@ export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly hotelService: HotelService,
-  ) {}
+  ) { }
 
   async getTotalUsers() {
     return await this.userRepository.count();
@@ -38,7 +38,7 @@ export class UserService {
       ],
     });
     if (checkExist)
-      throw new ConflictException('User with email or username exist');
+      throw new BadRequestException('User with email or username exist');
     const hotel = dto.hotelId
       ? await this.hotelService.findOne(dto.hotelId)
       : null;
@@ -62,10 +62,14 @@ export class UserService {
     return await this.userRepository.findOne({ where: { id: id } });
   }
 
+  async findOneByEmail(email: string) {
+    return await this.userRepository.findOne({ where: { email } });
+  }
+
   async update(id: number, dto: updateUserDto) {
     const checkExist = await this.userRepository.findOneBy({ id });
     if (!checkExist) {
-      throw new ConflictException('User does not exist');
+      throw new BadRequestException('User does not exist');
     }
     return await this.userRepository.update(
       { id },
@@ -81,7 +85,7 @@ export class UserService {
   async remove(id: number) {
     const checkExist = await this.userRepository.findOneBy({ id });
     if (!checkExist) {
-      throw new ConflictException('User with id does not exist');
+      throw new BadRequestException('User with id does not exist');
     }
     return await this.userRepository.delete({ id: id });
   }
@@ -89,7 +93,7 @@ export class UserService {
   async changeRole(id: number, dto: assignRoleDto) {
     const checkExist = await this.userRepository.findOneBy({ id });
     if (!checkExist) {
-      throw new ConflictException('User with id does not exist');
+      throw new BadRequestException('User with id does not exist');
     }
     return await this.userRepository.update(id, { role: dto.role });
   }
@@ -97,7 +101,7 @@ export class UserService {
   async validateWithEmail(email: string, password: string) {
     const checkExist = await this.userRepository.findOneBy({ email });
     if (!checkExist) {
-      throw new ConflictException('User with username does not exist');
+      throw new BadRequestException('User with username does not exist');
     }
     if (!comparePassword(password, checkExist.password)) {
       throw new ForbiddenException('Wrong password');
@@ -110,11 +114,11 @@ export class UserService {
       where: { id },
     });
     if (!checkExist) {
-      throw new ConflictException('User does not exist');
+      throw new BadRequestException('User does not exist');
     }
     const checkHotelExist = await this.hotelService.findOne(dto.hotelId);
     if (!checkHotelExist) {
-      throw new ConflictException('This hotel does not exist');
+      throw new BadRequestException('This hotel does not exist');
     }
     checkExist.hotel = checkHotelExist;
 

@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -10,7 +10,7 @@ export class HotelService {
   constructor(
     @InjectRepository(Hotel)
     private readonly hotelRepository: Repository<Hotel>,
-  ) {}
+  ) { }
 
   public getHotelRepository() {
     return this.hotelRepository;
@@ -25,7 +25,7 @@ export class HotelService {
       ],
     });
     if (checkExist) {
-      throw new ConflictException('Hotel exist');
+      throw new BadRequestException('Hotel exist');
     }
     const newHotel = this.hotelRepository.create({
       name: dto.name,
@@ -48,7 +48,7 @@ export class HotelService {
   async findOne(id: number) {
     const exist = await this.hotelRepository.findOne({ where: { id } });
     if (!exist) {
-      throw new ConflictException('User not found');
+      throw new BadRequestException('User not found');
     }
     return exist;
   }
@@ -56,7 +56,7 @@ export class HotelService {
   async update(id: number, dto: updateHotelDto) {
     const checkExist = await this.hotelRepository.findOne({ where: { id } });
     if (!checkExist) {
-      throw new ConflictException('User not exist');
+      throw new BadRequestException('User not exist');
     }
     return await this.hotelRepository.update(id, {
       name: dto.name ?? checkExist.name,
@@ -70,7 +70,7 @@ export class HotelService {
   async remove(id: number) {
     const checkExist = await this.hotelRepository.findOne({ where: { id } });
     if (!checkExist) {
-      throw new ConflictException('User not exist');
+      throw new BadRequestException('User not exist');
     }
     return await this.hotelRepository.delete({ id });
   }

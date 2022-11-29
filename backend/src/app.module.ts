@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 // import { MailerModule } from '@nestjs-modules/mailer';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,17 +10,12 @@ import Joi from 'joi';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
-import { StaffModule } from './modules/staff/staff.module';
-// import { ReservationsModule } from './modules/reservations/reservations.module';
-// import { ReservationsRoomModule } from './modules/reservations_room/reservations_room.module';
-// import { HotelModule } from './modules/hotel/hotel.module';
-// import { HotelRoomModule } from './modules/hotel_room/hotel_room.module';
-// import { HotelServiceModule } from './modules/hotel_service/hotel_service.module';
+import { ReservationsModule } from './modules/reservations/reservations.module';
+import { HotelModule } from './modules/hotel/hotel.module';
 // import { BillModule } from './modules/bill/bill.module';
 // import { BillRoomsModule } from './modules/bill_rooms/bill_rooms.module';
 // import { BillServicesModule } from './modules/bill_services/bill_services.module';
-// import { BookModule } from './modules/book/book.module';
-import { SharedModule } from './modules/shared/shared.module';
+// import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
   imports: [
@@ -30,6 +26,7 @@ import { SharedModule } from './modules/shared/shared.module';
         // App
         NODE_ENV: Joi.string().optional().default('development'),
         PORT: Joi.number().optional().default(3000),
+        JWT_SECRET: Joi.string().required(),
 
         // Database
         POSTGRES_HOST: Joi.string().required(),
@@ -66,6 +63,14 @@ import { SharedModule } from './modules/shared/shared.module';
       }),
     }),
 
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+      }),
+    }),
+
     // MailerModule.forRootAsync({
     //   imports: [ConfigModule],
     //   inject: [ConfigService],
@@ -87,17 +92,12 @@ import { SharedModule } from './modules/shared/shared.module';
 
     AuthModule,
     UserModule,
-    StaffModule,
-    SharedModule,
-    // ReservationsModule,
-    // ReservationsRoomModule,
-    // HotelModule,
-    // HotelRoomModule,
-    // HotelServiceModule,
+    // SharedModule,
+    ReservationsModule,
+    HotelModule,
     // BillModule,
     // BillRoomsModule,
     // BillServicesModule,
-    // BookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

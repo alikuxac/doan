@@ -21,7 +21,9 @@
     "esModuleInterop": true,
     "paths": {
       "@modules/*": ["src/modules/*"],
-      "@utils/*": ["src/utils/*"],
+      "@utils/*": ["src/utils/*"]
     }
-  }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
 }

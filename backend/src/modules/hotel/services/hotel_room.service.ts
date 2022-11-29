@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -17,12 +17,15 @@ export class HotelRoomService {
 
   private async getHotel(id: number) {
     const checkHotel = await this.hotelService.findOne(id);
-    if (!checkHotel) throw new ConflictException('Invalid hotel id');
+    if (!checkHotel) throw new BadRequestException('Invalid hotel id');
     return checkHotel;
   }
 
-  async create(dto: createHotelRoomDto) {
-    const hotel = await this.getHotel(dto.hotelId);
+  async create(hotelId: number, dto: createHotelRoomDto) {
+    const hotel = await this.getHotel(hotelId);
+    if (!hotel) {
+      throw new BadRequestException('Invalid hotel');
+    }
 
     const newRoom = this.hotelRoomRepository.create({
       ...dto,
@@ -32,19 +35,25 @@ export class HotelRoomService {
     return await this.hotelRoomRepository.save(newRoom);
   }
 
-  async findAll(limit = 10, skip = 10) {
-    return await this.hotelRoomRepository.find({ take: limit, skip });
-  }
-
-  async findOne(id: number) {
-    return await this.hotelRoomRepository.findOne({ where: { id } });
-  }
-
-  async update(id: number, dto: updateHotelRoomDto) {
-    const checkHotelRoom = await this.hotelRoomRepository.findOne({
-      where: { id },
+  async findAll(hotelId: number, limit = 10, skip = 10) {
+    return await this.hotelRoomRepository.find({
+      where: { hotelId },
+      take: limit,
+      skip,
     });
-    if (!checkHotelRoom) throw new ConflictException('Invalid Id');
+  }
+
+  async findOne(id: number, roomId: number) {
+    return await this.hotelRoomRepository.findOne({
+      where: { hotelId: id, id: roomId },
+    });
+  }
+
+  async update(id: number, hotelId: number, dto: updateHotelRoomDto) {
+    const checkHotelRoom = await this.hotelRoomRepository.findOne({
+      where: { id, hotelId },
+    });
+    if (!checkHotelRoom) throw new BadRequestException('Invalid Id');
 
     checkHotelRoom.name = dto.name ?? checkHotelRoom.name;
     checkHotelRoom.description = dto.description ?? checkHotelRoom.description;
@@ -54,12 +63,12 @@ export class HotelRoomService {
     return await this.hotelRoomRepository.save(checkHotelRoom);
   }
 
-  async remove(id: number) {
+  async remove(id: number, hotelId: number) {
     const checkExist = await this.hotelRoomRepository.findOne({
-      where: { id },
+      where: { id, hotelId },
     });
     if (!checkExist) {
-      throw new ConflictException('User not exist');
+      throw new BadRequestException('User not exist');
     }
     return await this.hotelRoomRepository.delete({ id });
   }
