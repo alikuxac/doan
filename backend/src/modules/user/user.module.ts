@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserService } from './user.service';
@@ -12,4 +12,9 @@ import { HotelModule } from '@modules/hotel/hotel.module';
   providers: [UserService],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule implements OnModuleInit {
+  constructor(private readonly userService: UserService) {}
+  async onModuleInit() {
+    await this.userService.init();
+  }
+}

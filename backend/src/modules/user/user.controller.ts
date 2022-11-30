@@ -50,7 +50,7 @@ export class UserController {
 
   @Patch(':id')
   @ApiParam({ name: 'id' })
-  @Roles(UserRole.MANAGER, UserRole.RECEPTIONIST)
+  @Roles(UserRole.USER, UserRole.MANAGER, UserRole.RECEPTIONIST)
   async update(@Param('id') id: string, @Body() dto: updateUserDto) {
     return await this.userService.update(+id, dto);
   }
@@ -64,7 +64,7 @@ export class UserController {
 
   @Patch(':id/role')
   @ApiParam({ name: 'id' })
-  @Roles(UserRole.MANAGER, UserRole.RECEPTIONIST)
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async changeRole(@Param('id') id: string, @Body() dto: assignRoleDto) {
     return await this.userService.changeRole(+id, dto);
   }
@@ -74,5 +74,12 @@ export class UserController {
   @Roles(UserRole.MASTER_MANAGER)
   async changeHotel(@Param('id') id: string, @Body() dto: changeHotelDto) {
     return await this.userService.changeHotel(+id, dto);
+  }
+
+  @Get(':id/reservations')
+  @ApiParam({ name: 'id' })
+  @Roles(UserRole.USER)
+  async getReservations(@Param('id') id: string) {
+    return await this.userService.getReservationOfUser(+id);
   }
 }

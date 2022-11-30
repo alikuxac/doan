@@ -54,11 +54,10 @@ export class createUserDto {
   phone?: string;
 
   @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({
+  @IsNotEmpty()
+  @ApiProperty({
     description: 'Password for user',
     name: 'password',
-    default: null,
   })
   password?: string;
 

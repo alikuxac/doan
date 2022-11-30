@@ -3,6 +3,7 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -17,13 +18,37 @@ import {
 
 import { comparePassword } from '@utils/utility';
 import { HotelService } from '@modules/hotel/services';
+import { UserRole } from './user.enum';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly hotelService: HotelService,
-  ) { }
+    private readonly configService: ConfigService,
+  ) {}
+
+  async init() {
+    const email = this.configService.get<string>('ADMIN_EMAIL');
+    const user = await this.findOneByEmail(email);
+    if (user) {
+      if (!user.isAdmin) {
+        user.isAdmin = true;
+      }
+      return await this.userRepository.save(user);
+    } else {
+      const newUser = this.userRepository.create({
+        email,
+        username: this.configService.get<string>('ADMIN_USERNAME'),
+        password: this.configService.get<string>('ADMIN_PASSWORD'),
+        firstName: 'admin',
+        lastName: 'admin',
+        isAdmin: true,
+        role: UserRole.MASTER_MANAGER,
+      });
+      return await this.userRepository.save(newUser);
+    }
+  }
 
   async getTotalUsers() {
     return await this.userRepository.count();
@@ -64,6 +89,19 @@ export class UserService {
 
   async findOneByEmail(email: string) {
     return await this.userRepository.findOne({ where: { email } });
+  }
+
+  async findOneByUsername(username: string) {
+    return await this.userRepository.findOne({ where: { username } });
+  }
+
+  async getReservationOfUser(id: number) {
+    const check = await this.userRepository.findOne({
+      where: { id },
+      relations: { reservations: true },
+    });
+    if (!check) throw new BadRequestException('Invalid id');
+    return check;
   }
 
   async update(id: number, dto: updateUserDto) {

@@ -37,8 +37,8 @@ export class User {
   })
   username: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true, default: null })
-  password: string | null;
+  @Column({ type: 'varchar', length: 100 })
+  password: string;
 
   @Column({ type: 'varchar', length: 100, nullable: false })
   firstName: string;
@@ -46,8 +46,8 @@ export class User {
   @Column({ type: 'varchar', length: 100, nullable: false })
   lastName: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: true, default: null })
-  displayName: string | null;
+  @Column({ type: 'varchar', length: 100 })
+  displayName: string;
 
   @Column({
     name: 'phone',
@@ -99,6 +99,9 @@ export class User {
   async hashPassword() {
     if (this.password) {
       this.password = await bcrypt.hash(this.password, 10);
+    }
+    if (!this.displayName) {
+      this.displayName = this.username;
     }
     this.last_active = new Date();
   }
