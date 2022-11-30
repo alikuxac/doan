@@ -12,9 +12,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { HotelModule } from './modules/hotel/hotel.module';
-// import { BillModule } from './modules/bill/bill.module';
-// import { BillRoomsModule } from './modules/bill_rooms/bill_rooms.module';
-// import { BillServicesModule } from './modules/bill_services/bill_services.module';
 // import { SharedModule } from './modules/shared/shared.module';
 
 @Module({
@@ -95,9 +92,6 @@ import { HotelModule } from './modules/hotel/hotel.module';
     // SharedModule,
     ReservationsModule,
     HotelModule,
-    // BillModule,
-    // BillRoomsModule,
-    // BillServicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
