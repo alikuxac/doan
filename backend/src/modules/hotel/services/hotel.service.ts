@@ -10,7 +10,7 @@ export class HotelService {
   constructor(
     @InjectRepository(Hotel)
     private readonly hotelRepository: Repository<Hotel>,
-  ) { }
+  ) {}
 
   public getHotelRepository() {
     return this.hotelRepository;
@@ -46,7 +46,10 @@ export class HotelService {
   }
 
   async findOne(id: number) {
-    const exist = await this.hotelRepository.findOne({ where: { id } });
+    const exist = await this.hotelRepository.findOne({
+      where: { id },
+      relations: { rooms: true },
+    });
     if (!exist) {
       throw new BadRequestException('User not found');
     }
