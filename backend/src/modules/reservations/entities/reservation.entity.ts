@@ -3,17 +3,17 @@ import {
   Column,
   Entity,
   ManyToOne,
-  OneToMany,
+  // OneToMany,
   JoinColumn,
-  BeforeInsert,
-  BeforeUpdate,
+  // BeforeInsert,
+  // BeforeUpdate,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import { User } from '@modules/user/entities/user.entity';
-import { ReservationsRoom } from './reservations_room.entity';
+// import { ReservationsRoom } from './reservations_room.entity';
 
 @Entity({ name: 'reservation' })
 export class Reservation {
@@ -28,11 +28,12 @@ export class Reservation {
   @JoinColumn()
   hotel: Hotel;
 
-  @OneToMany(() => ReservationsRoom, (res) => res.reservation, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  rooms: ReservationsRoom[];
+  // TODO: Làm xong cơ bản rồi tính tiếp
+  // @OneToMany(() => ReservationsRoom, (res) => res.reservation, {
+  //   cascade: true,
+  //   onDelete: 'CASCADE',
+  // })
+  // rooms: ReservationsRoom[];
 
   @Column({ name: 'name' })
   name: string;
@@ -61,16 +62,17 @@ export class Reservation {
   @UpdateDateColumn()
   updateAt: Date;
 
-  @BeforeInsert()
-  @BeforeUpdate()
-  count() {
-    let totalAdults = 0,
-      totalChildren = 0;
-    for (const room of this.rooms) {
-      totalAdults += room.adults;
-      totalChildren += room.childrens;
-    }
-    this.childrens = totalChildren;
-    this.guests = totalAdults;
-  }
+  // TODO: làm xong cơ bản rồi tính tiếp
+  // @BeforeInsert()
+  // @BeforeUpdate()
+  // count() {
+  //   let totalAdults = 0,
+  //     totalChildren = 0;
+  //   for (const room of this.rooms) {
+  //     totalAdults += room.adults;
+  //     totalChildren += room.childrens;
+  //   }
+  //   this.childrens = totalChildren;
+  //   this.guests = totalAdults;
+  // }
 }

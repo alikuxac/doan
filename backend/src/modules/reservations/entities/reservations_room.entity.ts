@@ -2,12 +2,12 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Entity,
-  ManyToOne,
-  JoinColumn,
+  // ManyToOne,
+  // JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Reservation } from './reservation.entity';
+// import { Reservation } from './reservation.entity';
 
 import { HotelRoomType } from '@modules/hotel/enum/hotel_room.enum';
 
@@ -16,9 +16,9 @@ export class ReservationsRoom {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @ManyToOne(() => Reservation, (res) => res.rooms)
-  @JoinColumn()
-  reservation: Reservation;
+  // @ManyToOne(() => Reservation, (res) => res.rooms)
+  // @JoinColumn()
+  // reservation: Reservation;
 
   @Column({ name: 'bed', type: 'integer', default: 1 })
   bed: number;
