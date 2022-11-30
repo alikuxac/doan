@@ -63,6 +63,9 @@ export class HotelRoom {
   @Column({ name: 'extra_bed', type: 'bool', default: false })
   extra_bed: boolean;
 
+  @Column({ name: 'available', type: 'boolean', default: true })
+  available: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
