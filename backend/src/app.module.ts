@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
+import { BullModule } from '@nestjs/bull';
 // import { MailerModule } from '@nestjs-modules/mailer';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -41,6 +42,19 @@ import { HotelModule } from './modules/hotel/hotel.module';
       }),
     }),
 
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get('REDIS_HOST'),
+          password: configService.get('REDIS_PASSWORD'),
+          port: configService.get('REDIS_PORT'),
+          username: configService.get('REDIS_USER'),
+        },
+      }),
+    }),
+
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -64,6 +78,7 @@ import { HotelModule } from './modules/hotel/hotel.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
+        secretOrPrivateKey: configService.get('JWT_SECRET'),
         secret: configService.get('JWT_SECRET'),
       }),
     }),
