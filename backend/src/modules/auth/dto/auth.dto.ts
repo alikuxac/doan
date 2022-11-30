@@ -48,12 +48,12 @@ export class signUpDto {
   phone?: string;
 
   @IsString()
-  @IsOptional()
-  @ApiPropertyOptional()
-  password?: string;
+  @IsNotEmpty()
+  @ApiProperty()
+  password: string;
 
   @IsEnum(UserRole)
   @IsOptional()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: UserRole })
   role: UserRole;
 }

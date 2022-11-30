@@ -1,25 +1,37 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  ForbiddenException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { signUpDto } from './dto/auth.dto';
+import { loginDto, signUpDto } from './dto/auth.dto';
 import { UserService } from '@modules/user/user.service';
-import { User } from '@modules/user/entities/user.entity';
+// import { User } from '@modules/user/entities/user.entity';
 import { comparePassword } from '@utils/utility';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
-  async login(user: User) {
+  async login(dto: loginDto) {
+    const user = await this.authentication(dto.username, dto.password);
+    if (!user) throw new ForbiddenException('Invalid username or password');
     const payload = {
       name: user.firstName,
       email: user.email,
       id: user.id,
     };
 
-    return { access_token: this.jwtService.sign(payload) };
+    return {
+      access_token: this.jwtService.sign(payload, {
+        secret: this.configService.get('JWT_SECRET'),
+      }),
+    };
   }
 
   async signup(dto: signUpDto) {
@@ -28,8 +40,8 @@ export class AuthService {
     return await this.userService.create(dto);
   }
 
-  async authentication(email: string, password: string) {
-    const user = await this.userService.findOneByEmail(email);
+  async authentication(username: string, password: string) {
+    const user = await this.userService.findOneByUsername(username);
     const checkPass = comparePassword(password, user.password);
     if (!user || !checkPass) return false;
     return user;
