@@ -42,8 +42,9 @@ export class AuthService {
 
   async authentication(username: string, password: string) {
     const user = await this.userService.findOneByUsername(username);
+    if (!user) return false;
     const checkPass = comparePassword(password, user.password);
-    if (!user || !checkPass) return false;
+    if (checkPass) return false;
     return user;
   }
 }
