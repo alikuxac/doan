@@ -3,21 +3,18 @@ import {
   IsNumber,
   IsString,
   IsDate,
-  // ValidateNested,
+  IsEnum,
+  ValidateNested,
 } from 'class-validator';
-// import { Type } from 'class-transformer';
-// import {
-// createReservationsRoomDto,
-// updateReservationsRoomDto,
-// } from './reservations_room.dto';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty, PartialType, OmitType } from '@nestjs/swagger';
+import { HotelRoomType } from '@modules/hotel/enum/hotel_room.enum';
+import { Type } from 'class-transformer';
+import {
+  createReservationsRoomDto,
+  updateReservationsRoomDto,
+} from './reservations_room.dto';
 
 export class createReservationDto {
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  userId: number;
-
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
@@ -41,20 +38,31 @@ export class createReservationDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  adults: number;
+  guests: number;
 
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
   childrends: number;
 
-  // @Type(() => createReservationDto)
-  // @ValidateNested({ each: true })
-  // rooms: createReservationsRoomDto[];
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  roomCount: number;
+
+  @IsEnum(HotelRoomType)
+  @IsNotEmpty()
+  type: HotelRoomType;
+
+  @Type(() => createReservationDto)
+  @ValidateNested({ each: true })
+  rooms: createReservationsRoomDto[];
 }
 
-export class updateReservationDto extends PartialType(createReservationDto) {
-  // @Type(() => createReservationDto)
-  // @ValidateNested({ each: true })
-  // rooms: updateReservationsRoomDto[];
+export class updateReservationDto extends PartialType(
+  OmitType(createReservationDto, ['rooms'] as const),
+) {
+  @Type(() => createReservationDto)
+  @ValidateNested({ each: true })
+  rooms: updateReservationsRoomDto[];
 }

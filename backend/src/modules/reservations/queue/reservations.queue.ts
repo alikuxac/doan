@@ -20,19 +20,19 @@ export class ReservationQueueProcess {
 
   @Process()
   async create(job: Job<createReservationDto>) {
-    const { checkIn, checkOut, hotelId, name, userId } = job.data;
+    const { checkIn, checkOut, hotelId, name } = job.data;
     const hotel = await this.hotelService.findOne(hotelId);
     if (!hotel) return await job.moveToFailed({ message: 'invalid hotel' });
-    const user = await this.userService.findOne(userId);
-    if (!user) return await job.moveToFailed({ message: 'invalid user' });
+    // const user = await this.userService.findOne(userId);
+    // if (!user) return await job.moveToFailed({ message: 'invalid user' });
     const newReservation = this.reservationRepository.create({
       checkIn,
       checkOut,
       hotel,
       name,
-      user,
+      // user,
       checkedIn: false,
     });
-    return await this.reservationRepository.save(newReservation);
+    return true;
   }
 }

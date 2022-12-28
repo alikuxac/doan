@@ -6,13 +6,16 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import {
-  HotelRoomStatus,
+  // HotelRoomStatus,
   HotelRoomType as RoomType,
 } from '../enum/hotel_room.enum';
+// import { Reservation } from '@modules/reservations/entities';
+import { ReservationsRoom } from '@modules/reservations/entities/reservations_room.entity';
 
 @Entity({ name: 'hotel_room' })
 export class HotelRoom {
@@ -28,21 +31,13 @@ export class HotelRoom {
   @Column({ name: 'room_number', type: 'integer' })
   room_number: number;
 
-  @Column({ name: 'price', type: 'decimal' })
+  @Column({ name: 'price', type: 'float' })
   price: number;
 
-  @Column({
-    name: 'status',
-    type: 'enum',
-    enum: HotelRoomStatus,
-    default: HotelRoomStatus.EMPTY,
-  })
-  status: HotelRoomStatus;
-
-  @Column({ nullable: true })
+  @Column({ type: 'integer' })
   hotelId: number;
 
-  @ManyToOne(() => Hotel, (hotel) => hotel.rooms, { eager: true })
+  @ManyToOne(() => Hotel, (hotel) => hotel.rooms, { onDelete: 'RESTRICT' })
   @JoinColumn()
   hotel: Hotel;
 
@@ -57,14 +52,20 @@ export class HotelRoom {
   @Column({ name: 'bed', type: 'integer' })
   bed: number;
 
-  @Column({ name: 'max_people', type: 'integer' })
-  max_people: number;
+  @Column({ name: 'max_occupancy', type: 'integer', nullable: false })
+  maxOccupancy: number;
 
   @Column({ name: 'extra_bed', type: 'bool', default: false })
   extra_bed: boolean;
 
   @Column({ name: 'available', type: 'boolean', default: true })
   available: boolean;
+
+  @Column('integer', { array: true })
+  roomNumbers: number[];
+
+  @OneToMany(() => ReservationsRoom, (res) => res.hotelRoom)
+  reservationRooms: ReservationsRoom[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -1,15 +1,17 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { Hotel } from '../entities/hotel.entity';
 import { createHotelDto, updateHotelDto } from '../dto/hotel.dto';
+import { User } from '@modules/user/entities/user.entity';
+import { UserRole } from '@modules/user/user.enum';
+import { HotelRepository } from '../repository/hotel.repository';
 
 @Injectable()
 export class HotelService {
   constructor(
     @InjectRepository(Hotel)
-    private readonly hotelRepository: Repository<Hotel>,
+    private readonly hotelRepository: HotelRepository,
   ) {}
 
   public getHotelRepository() {
@@ -33,6 +35,7 @@ export class HotelService {
       description: dto.description,
       address: dto.address,
       country: dto.country,
+      type: dto.type,
     });
     return await this.hotelRepository.save(newHotel);
   }
@@ -51,15 +54,21 @@ export class HotelService {
       relations: { rooms: true },
     });
     if (!exist) {
-      throw new BadRequestException('User not found');
+      throw new BadRequestException('Hotel not found');
     }
     return exist;
   }
 
-  async update(id: number, dto: updateHotelDto) {
+  async update(id: number, dto: updateHotelDto, user: User) {
+    if (
+      user.role === UserRole.MANAGER &&
+      !user.admins.find((hotel) => hotel.id === id)
+    ) {
+      throw new BadRequestException('You dont have permission to do this.');
+    }
     const checkExist = await this.hotelRepository.findOne({ where: { id } });
     if (!checkExist) {
-      throw new BadRequestException('User not exist');
+      throw new BadRequestException('Hotel not exist');
     }
     return await this.hotelRepository.update(id, {
       name: dto.name ?? checkExist.name,
@@ -76,5 +85,9 @@ export class HotelService {
       throw new BadRequestException('User not exist');
     }
     return await this.hotelRepository.delete({ id });
+  }
+
+  async getCountByType() {
+    return await this.hotelRepository.countByType();
   }
 }

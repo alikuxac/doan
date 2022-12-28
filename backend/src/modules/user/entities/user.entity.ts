@@ -70,11 +70,23 @@ export class User {
   @Column({ name: 'isAdmin', type: 'boolean', default: false })
   isAdmin: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean;
+
+  @Column({ type: 'integer', nullable: true })
+  otp: number;
+
+  @Column('uuid', { nullable: true })
+  referralId: string;
+
   @CreateDateColumn()
   created_date: Date;
 
   @UpdateDateColumn()
   updated_date: Date;
+
+  @Column({ nullable: true, comment: 'không phải staff là null' })
+  hotelId: number;
 
   @ManyToOne(() => Hotel, (hotel) => hotel.users, {
     nullable: true,
@@ -83,7 +95,7 @@ export class User {
     onDelete: 'SET NULL',
   })
   @JoinColumn()
-  hotel: Hotel | null;
+  hotel: Hotel;
 
   @OneToMany(() => Reservation, (res) => res.user, {
     cascade: true,
@@ -91,6 +103,9 @@ export class User {
     nullable: false,
   })
   reservations: Reservation[];
+
+  @OneToMany(() => Reservation, (res) => res.staff, {})
+  staffReservations: Reservation[];
 
   @OneToMany(() => Hotel, (hotel) => hotel.admin)
   admins: Hotel[];
@@ -111,5 +126,9 @@ export class User {
     if (this.password) {
       this.password = await bcrypt.hash(this.password, 10);
     }
+  }
+
+  get getFullName() {
+    return `${this.firstName} ${this.lastName}`;
   }
 }

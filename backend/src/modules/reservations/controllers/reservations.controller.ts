@@ -22,6 +22,8 @@ import {
 import { UserRole } from '@modules/user/user.enum';
 import { ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
 import { RolesGuard } from '@modules/auth/guards/role.guard';
+import { User } from '@modules/user/entities/user.entity';
+import { User as UserDecor } from '@modules/user/decorator/user.decorator';
 @Controller('reservations')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Resevation')
@@ -31,8 +33,8 @@ export class ReservationsController {
   @Post()
   @ApiBody({ type: createReservationDto })
   @Roles(UserRole.USER, UserRole.RECEPTIONIST)
-  async create(@Body() dto: createReservationDto) {
-    return await this.reservationsService.create(dto);
+  async create(@UserDecor() user: User, @Body() dto: createReservationDto) {
+    return await this.reservationsService.create(user, dto);
   }
 
   @Get()
@@ -42,24 +44,24 @@ export class ReservationsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.RECEPTIONIST, UserRole.MANAGER)
+  @Roles(UserRole.RECEPTIONIST, UserRole.MANAGER, UserRole.USER)
   @ApiParam({ name: 'id' })
   async findOne(@Param('id') id: string) {
-    return await await this.reservationsService.findOne(+id);
+    return await await this.reservationsService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.RECEPTIONIST, UserRole.MANAGER)
   @ApiParam({ name: 'id' })
   async update(@Param('id') id: string, @Body() dto: updateReservationDto) {
-    return await this.reservationsService.update(+id, dto);
+    return await this.reservationsService.update(id, dto);
   }
 
   @Delete(':id')
   @Roles(UserRole.RECEPTIONIST, UserRole.MANAGER)
   @ApiParam({ name: 'id' })
   async remove(@Param('id') id: string) {
-    return await this.reservationsService.remove(+id);
+    return await this.reservationsService.remove(id);
   }
 
   // @Post(':id/room')

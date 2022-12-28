@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { HotelRoomStatus, HotelRoomType } from '../enum/hotel_room.enum';
+import { HotelRoomType } from '../enum/hotel_room.enum';
 
 export class createHotelRoomDto {
   @IsString()
@@ -22,24 +22,19 @@ export class createHotelRoomDto {
   description: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsNotEmpty({ each: true })
   @ApiProperty()
-  roomTypeId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  room_number: number;
-
-  @IsEnum(HotelRoomStatus)
-  @IsOptional()
-  @ApiProperty({ enum: HotelRoomStatus })
-  status: HotelRoomStatus;
+  roomNumber: number[];
 
   @IsEnum(HotelRoomType)
   @IsOptional()
   @ApiProperty({ enum: HotelRoomType })
   type: HotelRoomType;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  hotelId: number;
 }
 
 export class updateHotelRoomDto extends PartialType(createHotelRoomDto) {}

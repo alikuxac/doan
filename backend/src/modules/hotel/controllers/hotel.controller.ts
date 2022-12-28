@@ -14,9 +14,13 @@ import { ApiBody, ApiTags, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { HotelRoomService } from '../services';
 import { createHotelRoomDto, updateHotelRoomDto } from '../dto/hotel_room.dto';
+import { User as UserDecor } from '@modules/user/decorator/user.decorator';
+import { User } from '@modules/user/entities/user.entity';
+import { Roles } from '@modules/auth/decorators/role.decorator';
+import { UserRole } from '@modules/user/user.enum';
+import { RolesGuard } from '@modules/auth/guards/role.guard';
 
 @Controller('hotel')
-@UseGuards(JwtAuthGuard)
 @ApiTags('hotel')
 export class HotelController {
   constructor(
@@ -25,51 +29,77 @@ export class HotelController {
   ) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBody({ type: createHotelDto })
+  @Roles(UserRole.MASTER_MANAGER)
   async create(@Body() dto: createHotelDto) {
     return await this.hotelService.create(dto);
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.MASTER_MANAGER)
   async findAll() {
     return await this.hotelService.findAll();
   }
 
+  @Get('countByType')
+  async getCountByType() {
+    return await this.hotelService.getCountByType();
+  }
+
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiParam({ name: 'id' })
   async findOne(@Param('id') id: string) {
     return await this.hotelService.findOne(+id);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
-  async update(@Param('id') id: string, @Body() dto: updateHotelDto) {
-    return await this.hotelService.update(+id, dto);
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  async update(
+    @UserDecor() user: User,
+    @Param('id') id: string,
+    @Body() dto: updateHotelDto,
+  ) {
+    return await this.hotelService.update(+id, dto, user);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
+  @Roles(UserRole.MASTER_MANAGER)
   async remove(@Param('id') id: string) {
     return await this.hotelService.remove(+id);
   }
 
   @Get(':id/room')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'hotel id' })
-  async getAllRoom(@Param('id') hotelId: string) {
-    return await this.hotelRoomService.findAll(+hotelId);
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  async getAllRoom(@UserDecor() user: User, @Param('id') hotelId: string) {
+    return await this.hotelRoomService.findAll(+hotelId, user);
   }
 
   @Post(':id/room')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'hotel id' })
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async createHotelRoom(
+    @UserDecor() user: User,
     @Param('id') hotelId: string,
     @Body() dto: createHotelRoomDto,
   ) {
-    return await this.hotelRoomService.create(+hotelId, dto);
+    return await this.hotelRoomService.create(+hotelId, dto, user);
   }
 
   @Get(':id/room/:roomId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async findOneHotelRoom(
     @Param('id') hotelId: string,
     @Param('roomId') roomId: string,
@@ -78,21 +108,27 @@ export class HotelController {
   }
 
   @Patch(':id/room/:roomId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async updateHotelRoom(
+    @UserDecor() user: User,
     @Param('id') hotelId: string,
     @Param('roomId') roomId: string,
     @Body() dto: updateHotelRoomDto,
   ) {
-    return await this.hotelRoomService.update(+roomId, +hotelId, dto);
+    return await this.hotelRoomService.update(+roomId, +hotelId, dto, user);
   }
 
   @Delete(':id/room/:roomId')
   @ApiParam({ name: 'id' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async removeHotelRoom(
+    @UserDecor() user: User,
     @Param('id') id: string,
     @Param('roomId') roomId: string,
   ) {
-    return await this.hotelRoomService.remove(+roomId, +id);
+    return await this.hotelRoomService.remove(+roomId, +id, user);
   }
 }

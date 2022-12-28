@@ -13,3 +13,10 @@ export enum HotelRoomType {
   SUITES = 'SUITES',
   PRESIDENTIAL = 'PRESIDENTIAL',
 }
+
+export enum BedType {
+  SINGLE = 'SINGLE',
+  DOUBLE = 'DOUBLE',
+  TWIN = 'TWIN',
+  TRIPLE = 'TRIPLE',
+}

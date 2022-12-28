@@ -34,8 +34,9 @@ export class UserService {
     if (user) {
       if (!user.isAdmin) {
         user.isAdmin = true;
+        return await this.userRepository.save(user);
       }
-      return await this.userRepository.save(user);
+      return;
     } else {
       const newUser = this.userRepository.create({
         email,

@@ -14,6 +14,10 @@ import { UserModule } from './modules/user/user.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { HotelModule } from './modules/hotel/hotel.module';
 // import { SharedModule } from './modules/shared/shared.module';
+// import { FeedbackModule } from './modules/feedback/feedback.module';
+// import { DiscountModule } from './modules/discount/discount.module';
+// import { PaymentsModule } from './modules/payments/payments.module';
+// import { ReviewModule } from './modules/review/review.module';
 
 @Module({
   imports: [
@@ -107,6 +111,10 @@ import { HotelModule } from './modules/hotel/hotel.module';
     // SharedModule,
     ReservationsModule,
     HotelModule,
+    // FeedbackModule,
+    // DiscountModule,
+    // PaymentsModule,
+    // ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,14 +1,11 @@
-import { HotelRoomType } from '@modules/hotel/enum/hotel_room.enum';
 import { PartialType } from '@nestjs/mapped-types';
-import {
-  IsNumber,
-  IsNotEmpty,
-  IsOptional,
-  IsBoolean,
-  IsEnum,
-} from 'class-validator';
+import { IsNumber, IsNotEmpty, IsOptional, IsBoolean } from 'class-validator';
 
 export class createReservationsRoomDto {
+  @IsNumber()
+  @IsNotEmpty()
+  roomId: number;
+
   @IsNumber()
   @IsNotEmpty()
   bed: number;
@@ -17,23 +14,15 @@ export class createReservationsRoomDto {
   @IsNotEmpty()
   adults: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  childrens: number;
-
   @IsBoolean()
   @IsOptional()
   extra_bed: boolean;
 
-  @IsEnum(HotelRoomType)
+  @IsNumber({ allowNaN: false }, { each: true })
   @IsOptional()
-  type: HotelRoomType;
+  child_ages: number[];
 }
 
 export class updateReservationsRoomDto extends PartialType(
   createReservationsRoomDto,
-) {
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-}
+) {}
