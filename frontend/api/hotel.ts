@@ -1,0 +1,1 @@
+import { fetchData, postData } from './base';
