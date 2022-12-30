@@ -41,17 +41,18 @@ export class ReservationsService {
   ) {}
 
   async create(user: User, dto: createReservationDto) {
-    const { checkIn, checkOut, type, rooms, hotelId, childrends } = dto;
+    const { checkIn, checkOut, rooms, hotelId, childrends, roomCount } = dto;
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
 
     this.reservationRepository.checkDateValid(checkInDate, checkOutDate);
 
     await this.reservationRepository.manager.transaction(
+      'SERIALIZABLE',
       async (entityManager) => {
         const hotel = await this.hotelService.findOne(hotelId);
 
-        if (childrends > 1 && hotel.noChildren) {
+        if (childrends > 0 && hotel.noChildren) {
           throw new BadRequestException('This hotel is not accept children');
         }
 
@@ -65,22 +66,21 @@ export class ReservationsService {
         });
 
         const roomArray = [];
-        for (const room of dto.rooms) {
+        for (const room of rooms) {
           const hotelRoom = await this.hotelRoomRepository.findOne({
             where: { id: room.roomId },
           });
 
           const newRoom = this.reservationRoomRepository.create();
 
-          newRoom.childrens = room.child_ages.length;
-          newRoom.childrens_age = room.child_ages;
+          newRoom.roomNumbers = room.roomNumbers;
           newRoom.hotelRoom = hotelRoom;
 
           roomArray.push(newRoom);
         }
 
         newReservation.rooms = roomArray;
-        newReservation.roomCount = roomArray.length;
+        newReservation.roomCount = roomCount;
 
         return await entityManager.save(newReservation);
       },
@@ -95,6 +95,7 @@ export class ReservationsService {
   async findOne(id: string) {
     return await this.reservationRepository.findOne({
       where: { id },
+      relations: { rooms: true },
       //TODO: add room later. code -> relations: { rooms: true },
     });
   }

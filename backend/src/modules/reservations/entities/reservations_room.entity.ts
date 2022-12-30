@@ -26,11 +26,8 @@ export class ReservationsRoom {
   @JoinColumn()
   hotelRoom: HotelRoom;
 
-  @Column({ name: 'childrens', type: 'integer', comment: 'số trẻ em' })
-  childrens: number;
-
-  @Column({ array: true, type: 'integer' })
-  childrens_age: number[];
+  @Column({ name: 'room_numbers', type: 'integer', comment: 'số phòng chọn' })
+  roomNumbers: number[];
 
   @CreateDateColumn()
   createAt: Date;

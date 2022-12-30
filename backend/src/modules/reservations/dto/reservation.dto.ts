@@ -3,11 +3,9 @@ import {
   IsNumber,
   IsString,
   IsDate,
-  IsEnum,
   ValidateNested,
 } from 'class-validator';
 import { ApiProperty, PartialType, OmitType } from '@nestjs/swagger';
-import { HotelRoomType } from '@modules/hotel/enum/hotel_room.enum';
 import { Type } from 'class-transformer';
 import {
   createReservationsRoomDto,
@@ -49,10 +47,6 @@ export class createReservationDto {
   @IsNotEmpty()
   @ApiProperty()
   roomCount: number;
-
-  @IsEnum(HotelRoomType)
-  @IsNotEmpty()
-  type: HotelRoomType;
 
   @Type(() => createReservationDto)
   @ValidateNested({ each: true })

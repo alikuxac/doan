@@ -90,12 +90,13 @@ export class Reservation {
   @Column({ type: 'date', nullable: true })
   canceledAt: Date;
 
-  @Column({ length: 255, comment: 'gửi request' })
+  @Column({ length: 255, comment: 'gửi request đặc biệt' })
   request: string;
 
   @ManyToOne(() => Discount, (discount) => discount.reservations, {
     nullable: true,
   })
+  @JoinColumn()
   discount: Discount;
 
   @CreateDateColumn()

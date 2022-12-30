@@ -20,13 +20,14 @@ import {
 //   updateReservationsRoomDto,
 // } from '../dto/reservations_room.dto';
 import { UserRole } from '@modules/user/user.enum';
-import { ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from '@modules/auth/guards/role.guard';
 import { User } from '@modules/user/entities/user.entity';
 import { User as UserDecor } from '@modules/user/decorator/user.decorator';
 @Controller('reservations')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('Resevation')
+@ApiBearerAuth()
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
 
