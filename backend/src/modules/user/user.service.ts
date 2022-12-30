@@ -29,8 +29,8 @@ export class UserService {
   ) {}
 
   async init() {
-    const email = this.configService.get<string>('ADMIN_EMAIL');
-    const user = await this.findOneByEmail(email);
+    const usename = this.configService.get<string>('ADMIN_USERNAME');
+    const user = await this.findOneByUsername(usename);
     if (user) {
       if (!user.isAdmin) {
         user.isAdmin = true;
@@ -39,7 +39,7 @@ export class UserService {
       return;
     } else {
       const newUser = this.userRepository.create({
-        email,
+        email: this.configService.get<string>('ADMIN_EMAIL'),
         username: this.configService.get<string>('ADMIN_USERNAME'),
         password: this.configService.get<string>('ADMIN_PASSWORD'),
         firstName: 'admin',

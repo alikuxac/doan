@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { HotelService } from '../services/hotel.service';
 import { createHotelDto, updateHotelDto } from '../dto/hotel.dto';
-import { ApiBody, ApiTags, ApiParam } from '@nestjs/swagger';
+import { ApiBody, ApiTags, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { HotelRoomService } from '../services';
 import { createHotelRoomDto, updateHotelRoomDto } from '../dto/hotel_room.dto';
@@ -32,6 +32,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBody({ type: createHotelDto })
   @Roles(UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async create(@Body() dto: createHotelDto) {
     return await this.hotelService.create(dto);
   }
@@ -39,6 +40,7 @@ export class HotelController {
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async findAll() {
     return await this.hotelService.findAll();
   }
@@ -52,6 +54,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiParam({ name: 'id' })
+  @ApiBearerAuth()
   async findOne(@Param('id') id: string) {
     return await this.hotelService.findOne(+id);
   }
@@ -59,6 +62,7 @@ export class HotelController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
+  @ApiBearerAuth()
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async update(
     @UserDecor() user: User,
@@ -72,6 +76,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async remove(@Param('id') id: string) {
     return await this.hotelService.remove(+id);
   }
@@ -80,6 +85,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'hotel id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async getAllRoom(@UserDecor() user: User, @Param('id') hotelId: string) {
     return await this.hotelRoomService.findAll(+hotelId, user);
   }
@@ -88,6 +94,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'hotel id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async createHotelRoom(
     @UserDecor() user: User,
     @Param('id') hotelId: string,
@@ -100,6 +107,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async findOneHotelRoom(
     @Param('id') hotelId: string,
     @Param('roomId') roomId: string,
@@ -111,6 +119,7 @@ export class HotelController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async updateHotelRoom(
     @UserDecor() user: User,
     @Param('id') hotelId: string,
@@ -124,6 +133,7 @@ export class HotelController {
   @ApiParam({ name: 'id' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
+  @ApiBearerAuth()
   async removeHotelRoom(
     @UserDecor() user: User,
     @Param('id') id: string,

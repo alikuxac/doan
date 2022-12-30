@@ -7,8 +7,9 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
-import { ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from '@modules/auth/guards/role.guard';
 
 import { UserService } from './user.service';
@@ -24,6 +25,7 @@ import { UserRole } from './user.enum';
 
 @Controller('user')
 @ApiTags('user')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -44,42 +46,51 @@ export class UserController {
   @Get(':id')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.RECEPTIONIST)
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseIntPipe) id: string) {
     return await this.userService.findOne(+id);
   }
 
   @Patch(':id')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.USER, UserRole.MANAGER, UserRole.RECEPTIONIST)
-  async update(@Param('id') id: string, @Body() dto: updateUserDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() dto: updateUserDto,
+  ) {
     return await this.userService.update(+id, dto);
   }
 
   @Delete(':id')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.RECEPTIONIST)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', ParseIntPipe) id: string) {
     return await this.userService.remove(+id);
   }
 
   @Patch(':id/role')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
-  async changeRole(@Param('id') id: string, @Body() dto: assignRoleDto) {
+  async changeRole(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() dto: assignRoleDto,
+  ) {
     return await this.userService.changeRole(+id, dto);
   }
 
   @Patch(':id/hotel')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MASTER_MANAGER)
-  async changeHotel(@Param('id') id: string, @Body() dto: changeHotelDto) {
+  async changeHotel(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() dto: changeHotelDto,
+  ) {
     return await this.userService.changeHotel(+id, dto);
   }
 
   @Get(':id/reservations')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.USER)
-  async getReservations(@Param('id') id: string) {
+  async getReservations(@Param('id', ParseIntPipe) id: string) {
     return await this.userService.getReservationOfUser(+id);
   }
 }
