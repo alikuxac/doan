@@ -28,9 +28,6 @@ export class HotelRoom {
   @Column({ name: 'description', length: 255, type: 'varchar' })
   description: string;
 
-  @Column({ name: 'room_number', type: 'integer' })
-  room_number: number;
-
   @Column({ name: 'price', type: 'float' })
   price: number;
 
@@ -60,6 +57,9 @@ export class HotelRoom {
 
   @Column({ name: 'available', type: 'boolean', default: true })
   available: boolean;
+
+  @Column({ name: 'photo', type: 'varchar' })
+  photo: string;
 
   @Column('integer', { array: true })
   roomNumbers: number[];
