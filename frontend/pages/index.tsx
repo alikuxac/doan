@@ -13,6 +13,8 @@ import SearchBar from "../components/client/SearchBar";
 import RoomView from "../components/client/RoomView/RoomView";
 import StyledStep from "../components/client/Step/Step";
 
+import Client from "../layout/Client";
+
 const steps = ["Hotel & Date", "Room Type & View", "Preview & Payment"];
 
 const Home: NextPage = () => {
@@ -71,8 +73,8 @@ const Home: NextPage = () => {
   // };
 
   return (
-    <>
-      <Navbar />
+    <Client>
+      {/* <Navbar /> */}
       <Box
         // border={2}
         maxWidth="lg"
@@ -82,7 +84,7 @@ const Home: NextPage = () => {
           padding: "25px 0 0",
         }}
       >
-        <StyledStep />
+        {/* <StyledStep /> */}
         {/* <Stepper nonLinear activeStep={step} alternativeLabel> */}
           {/* <Step key={1}>
             <StepButton color="inherit"></StepButton>
@@ -95,10 +97,11 @@ const Home: NextPage = () => {
             </Step>
           ))} */}
         {/* </Stepper> */}
-        {step === 0 && <SearchBar />}
-        {step === 1 && <RoomView />}
+        <SearchBar />
+        {/* {step === 0 && <SearchBar />} */}
+        {/* {step === 1 && <RoomView />} */}
       </Box>
-    </>
+    </Client>
   );
 };
 

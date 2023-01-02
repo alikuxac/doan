@@ -1,5 +1,5 @@
-import { FC, SyntheticEvent, useCallback, useState, useEffect } from "react";
-import { styled } from "@mui/system";
+import { FC, useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { IDateRange, IOptions } from "../../../interfaces/SearchBar.interface";
 import { addDays, compareDesc } from "date-fns";
 import { useAppDispatch, useAppSelector } from "../../../hooks/reduxHooks";
@@ -10,39 +10,25 @@ import {
 } from "../../../reducers/reservationSlice";
 import { setStep, setValid } from "../../../reducers/globalSlice";
 
-import { DateRange } from "react-date-range";
 import Container from "@mui/material/Container";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import Icon from "@mui/material/Icon";
-import TypoGraphy from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper"
 
 import { DesktopDatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 import HotelIcon from "@mui/icons-material/Hotel";
-import DateRangeIcon from "@mui/icons-material/DateRange";
 
-const defaultDateRange: IDateRange[] = [
-  {
-    startDate: new Date(),
-    endDate: new Date(),
-    key: "selection",
-  },
-];
-
-const hotels: any[] = [
-  { label: "hotel 1", id: 1,  noChildren: false },
-  { label: "hotel 2", id: 2,  noChildren: true },
-];
+import { hotels } from "../../../data/hotel";
 
 const SearchBar: FC = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const { checkIn, checkOut, children, adult, rooms, hotel: currentHotel } = useAppSelector(selectReservation);
 
   const [hotel, selectHotel] = useState<any>(currentHotel);
@@ -53,15 +39,18 @@ const SearchBar: FC = () => {
   const [startDate, setStartDate] = useState<Date | null>(checkIn); // addDays(now, 1)
   const [endDate, setEndDate] = useState<Date | null>(checkOut); // addDays(now, 2)
 
-  const [isValidDate, setIsValidDate] = useState<boolean>(true);
+  const [isValidDate, setIsValidDate] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!startDate || !endDate) return;
-    const dateCompare = compareDesc(new Date(startDate), new Date(endDate));
+    if (!startDate && !endDate) return;
+    const dateCompare = compareDesc(
+      new Date(startDate as Date),
+      new Date(endDate as Date)
+    );
     if (dateCompare === -1) {
-      setIsValidDate(false);
-    } else {
       setIsValidDate(true);
+    } else {
+      setIsValidDate(false);
     }
   }, [startDate, endDate]);
 
@@ -73,15 +62,16 @@ const SearchBar: FC = () => {
   };
   const [options, setOptions] = useState<IOptions>(defaultOptions);
   const [isChildrenAllowed, setIsChildrenAllowed] = useState<boolean>(false);
-  const [isValidOptions, setIsValidOptions] = useState<boolean>(true);
+  const [isValidOptions, setIsValidOptions] = useState<boolean>(false);
 
   // Search button
   const [disabledButton, setDisableButton] = useState<boolean>(false);
 
   useEffect(() => {
+    if (hotel === currentHotel) return;
     dispatch(setHotel({ hotel }))
     setIsChildrenAllowed(hotel?.noChildren as boolean);
-  }, [dispatch, hotel]);
+  }, [dispatch, hotel, currentHotel]);
 
   useEffect(() => {
     if (isChildrenAllowed) {
@@ -90,28 +80,25 @@ const SearchBar: FC = () => {
   }, [isChildrenAllowed]);
 
   useEffect(() => {
-    const total = options.adult + options.children;
+    const total = options.adult;
     if (options.room > total) {
       setIsValidOptions(false);
-      dispatch(setValid({ valid: false }))
     } else {
       setIsValidOptions(true);
     }
-  }, [dispatch, options]);
+  }, [options]);
 
   useEffect(() => {
     if (!hotel && isValidDate && isValidOptions) {
       setDisableButton(false);
-      dispatch(setValid({ valid: true }));
     }
 
     if (!isValidDate || !isValidOptions || !hotel) {
       setDisableButton(false);
-      dispatch(setValid({ valid: false }));
     } else {
       setDisableButton(true);
     }
-  }, [dispatch, hotel, isValidDate, isValidOptions]);
+  }, [hotel, isValidDate, isValidOptions]);
 
   const handleSubmit = () => {
     dispatch(
@@ -125,11 +112,11 @@ const SearchBar: FC = () => {
         hotel,
       })
     );
-    dispatch(setStep({ step: 1 }))
+    router.push('/search', )
   };
 
   return (
-    <Container maxWidth="lg">
+    <Paper sx={{ marginTop: 10 }} elevation={2}>
       <Grid
         container
         spacing={2}
@@ -148,6 +135,7 @@ const SearchBar: FC = () => {
             defaultValue={hotel}
             value={hotel}
             options={hotels}
+            getOptionLabel={(option) => `${option.name} (${option.city})`}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             renderInput={(params) => <TextField {...params} label="Hotel" />}
             onChange={(_e, value) => {
@@ -166,7 +154,12 @@ const SearchBar: FC = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={!isValidDate}
+                  error={isValidDate}
+                  helperText={
+                    isValidDate && startDate && endDate
+                      ? "Check-in Date must be before check-out Date"
+                      : ""
+                  }
                   // inputProps={{ readOnly: true }}
                 />
               )}
@@ -184,7 +177,12 @@ const SearchBar: FC = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={!isValidDate}
+                  error={isValidDate}
+                  helperText={
+                    isValidDate && startDate && endDate
+                      ? "Check-out Date must be after check-in Date"
+                      : ""
+                  }
                   // inputProps={{ readOnly: true }}
                 />
               )}
@@ -222,6 +220,7 @@ const SearchBar: FC = () => {
             value={options.room}
             InputProps={{ inputProps: { min: 1 } }}
             error={!isValidOptions}
+            helperText={isValidOptions ?"" : "Room cannot higher than total people" }
             onChange={(e) =>
               setOptions((prev) => ({ ...prev, room: +e.target.value }))
             }
@@ -245,7 +244,7 @@ const SearchBar: FC = () => {
           </Button>
         </Grid>
       </Grid>
-    </Container>
+    </Paper>
   );
 };
 

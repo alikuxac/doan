@@ -3,26 +3,88 @@ import { useQuery } from "react-query";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import { selectReservation } from "../../../reducers/reservationSlice";
 import { format } from "date-fns";
+import { styled } from "@mui/styles";
 
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import TypoGraphy from "@mui/material/Typography";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
-import { styled } from "@mui/styles";
-import { fetchData } from "../../../api/base";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import CardHeader from "@mui/material/CardHeader";
+import CardActionArea from "@mui/material/CardActionArea";
+import Grid from "@mui/material/Grid";
+import Chip from "@mui/material/Chip";
+import Divider from "@mui/material/Divider";
+
+import InfoDetails from "./InfoDetails/InfoDetails";
+import RoomDetails from "./RoomDetails/RoomDetails";
+
+const rooms = [
+  {
+    name: "Giường đơn",
+    roomNumbers: [101, 103, 106],
+    hotelId: 1,
+    type: "SINGLE",
+    maxOccupancy: 2,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    name: "Giường đôi",
+    roomNumbers: [201, 202, 206],
+    hotelId: 1,
+    type: "DOUBLE",
+    maxOccupancy: 4,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    name: "Giường đôi",
+    roomNumbers: [201, 202, 206],
+    hotelId: 1,
+    type: "DOUBLE",
+    maxOccupancy: 4,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    name: "Giường đôi",
+    roomNumbers: [201, 202, 206],
+    hotelId: 1,
+    type: "DOUBLE",
+    maxOccupancy: 4,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    name: "Giường đôi 1",
+    roomNumbers: [301, 302, 306],
+    hotelId: 1,
+    type: "STUDIO",
+    maxOccupancy: 4,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    name: "Giường đôi",
+    roomNumbers: [401],
+    hotelId: 1,
+    type: "PRESIDENTIAL",
+    maxOccupancy: 4,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+];
 
 const RoomView: FC = () => {
   const { hotel, checkIn, checkOut, adult, children, rooms } =
     useAppSelector(selectReservation);
 
-  const checkInDate = format(new Date(checkIn as Date), "dd/MM/yyyy");
-  const checkOutDate = format(new Date(checkOut as Date), "dd/MM/yyyy");
-
-  // const [roomLoading, setRoomLoading] = useState(false);
+  const [activeID, setActiveId] = useState<string | null>(null);
+  const [roomLoading, setRoomLoading] = useState(false);
 
   // const { isLoading: roomLoading } = useQuery("", () => fetchData("a"));
 
@@ -35,34 +97,45 @@ const RoomView: FC = () => {
         justifyContent: "center",
       }}
     >
-      <Stack spacing={2} sx={{ display: "flex", position: "relative" }}>
+      <Stack spacing={2} sx={{ display: "flex", position: "relative", width: "100%" }}>
+        {/* <Paper sx={{ padding: "1" }}>
+          <TypoGraphy
+          variant="h5"
+          fontWeight="bold"
+          color="#14226b"
+          sx={{
+            fontWeight: 700,
+            fontSize: "1.25 rem",
+          }}
+        >
+          Info
+        </TypoGraphy>
+        </Paper> */}
+        
+        {/* <Divider textAlign="left"></Divider> */}
         <Paper sx={{ padding: "1" }}>
-          <List>
-            <ListItem>
-              <ListItemText
-                primary={`Hotel: ${(hotel as any).label}`}
-              ></ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary={`Check In: ${checkInDate}`}></ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary={`Check Out: ${checkOutDate}`}
-              ></ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary={`Adult: ${adult}`}></ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary={`Children: ${children}`}></ListItemText>
-            </ListItem>
-            <ListItem>
-              <ListItemText primary={`Rooms: ${rooms}`}></ListItemText>
-            </ListItem>
-          </List>
+          <InfoDetails />
         </Paper>
-        <Paper sx={{ padding: "1", textAlign: "center" }}>a</Paper>
+        <TypoGraphy
+          variant="h5"
+          fontWeight="bold"
+          color="#14226b"
+          sx={{
+            fontWeight: 700,
+            fontSize: "1.25 rem",
+          }}
+        >
+          Rooms
+        </TypoGraphy>
+        <Divider textAlign="left"/>
+        <Paper sx={{ padding: "1" }}>
+          <Box flexDirection={"column"} display="flex" alignItems="center" >
+            <RoomDetails />
+          </Box>
+          
+          
+          <Paper></Paper>
+        </Paper>
         <Paper sx={{ padding: "1", textAlign: "center" }}>a</Paper>
         <Paper sx={{ padding: "1", textAlign: "center" }}>a</Paper>
       </Stack>

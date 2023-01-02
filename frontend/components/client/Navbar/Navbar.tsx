@@ -13,13 +13,40 @@ import {
   Menu,
   MenuItem,
   Tooltip,
+  useScrollTrigger,
+  Slide,
 } from "@mui/material";
+
+interface Props {
+  /**
+   * Injected by the documentation to work in an iframe.
+   * You won't need it on your project.
+   */
+  window?: () => Window;
+  children: React.ReactElement;
+}
+
+function HideOnScroll(props: Props) {
+  const { children, window } = props;
+  // Note that you normally won't need to set the window ref as useScrollTrigger
+  // will default to window.
+  // This is only being set here because the demo is in an iframe.
+  const trigger = useScrollTrigger({
+    target: window ? window() : undefined,
+  });
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
 
 const notLoggedInPages = ["Sign In", "Register"];
 const loggedInPages = ["My Profile", "Log out"];
 
 const Navbar: FC = () => {
-  // const { isLoggedIn, isAdmin } = useAppSelector(selectAuth);
+  const { isAuthenticated, isAdmin } = useAppSelector(selectAuth);
 
   // const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
   //   null
@@ -42,12 +69,13 @@ const Navbar: FC = () => {
 
   return (
     <AppBar
-      style={{
+      sx={{
         backgroundColor: "#003580",
         display: "flex",
         position: "relative",
         justifyContent: "center",
       }}
+      position="fixed"
     >
       <Container maxWidth="xl">
         <Toolbar
@@ -117,17 +145,17 @@ const Navbar: FC = () => {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {notLoggedInPages.map((page) => (
+              {/* {notLoggedInPages.map((page) => (
                 <MenuItem key={page}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
-              ))}
-              {/* {isLoggedIn ? (
+              ))} */}
+              {isAuthenticated ? (
                 <Container>
                   <MenuItem key="Profile">Profile</MenuItem>
-                  <MenuItem key='Settings'>Settings</MenuItem>
-                  {isAdmin && (<MenuItem key="Admin">Admin</MenuItem>)}
-                  <MenuItem key='Log out'>Log out</MenuItem>
+                  <MenuItem key="Settings">Settings</MenuItem>
+                  {isAdmin && <MenuItem key="Admin">Admin</MenuItem>}
+                  <MenuItem key="Log out">Log out</MenuItem>
                 </Container>
               ) : (
                 notLoggedInPages.map((page) => (
@@ -135,7 +163,7 @@ const Navbar: FC = () => {
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))
-              )} */}
+              )}
             </Menu>
           </Box>
         </Toolbar>
