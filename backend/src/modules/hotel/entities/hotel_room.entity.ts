@@ -10,11 +10,7 @@ import {
 } from 'typeorm';
 
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
-import {
-  // HotelRoomStatus,
-  HotelRoomType as RoomType,
-} from '../enum/hotel_room.enum';
-// import { Reservation } from '@modules/reservations/entities';
+import { HotelRoomType as RoomType } from '../enum/hotel_room.enum';
 import { ReservationsRoom } from '@modules/reservations/entities/reservations_room.entity';
 
 @Entity({ name: 'hotel_room' })

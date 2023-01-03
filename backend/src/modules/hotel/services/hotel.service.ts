@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+// import { InjectRepository } from '@nestjs/typeorm';
 
-import { Hotel } from '../entities/hotel.entity';
+// import { Hotel } from '../entities/hotel.entity';
 import { createHotelDto, updateHotelDto } from '../dto/hotel.dto';
 import { User } from '@modules/user/entities/user.entity';
 import { UserRole } from '@modules/user/user.enum';
@@ -10,7 +10,7 @@ import { HotelRepository } from '../repository/hotel.repository';
 @Injectable()
 export class HotelService {
   constructor(
-    @InjectRepository(Hotel)
+    // @InjectRepository(Hotel)
     private readonly hotelRepository: HotelRepository,
   ) {}
 

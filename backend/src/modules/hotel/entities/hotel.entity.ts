@@ -39,7 +39,12 @@ export class Hotel {
   @Column({ name: 'country' })
   country: string;
 
-  @Column({ name: 'type', type: 'enum', enum: HotelType, default: HotelType.Hotel })
+  @Column({
+    name: 'type',
+    type: 'enum',
+    enum: HotelType,
+    default: HotelType.Hotel,
+  })
   type: HotelType;
 
   @Column({ name: 'no_children', type: 'boolean', default: false })

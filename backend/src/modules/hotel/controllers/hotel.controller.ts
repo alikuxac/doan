@@ -7,9 +7,16 @@ import {
   Param,
   Delete,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
+  Query,
 } from '@nestjs/common';
 import { HotelService } from '../services/hotel.service';
-import { createHotelDto, updateHotelDto } from '../dto/hotel.dto';
+import {
+  createHotelDto,
+  updateHotelDto,
+  getAvailableRoomHotelDto,
+} from '../dto/hotel.dto';
 import { ApiBody, ApiTags, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@modules/auth/guards/jwt-auth.guard';
 import { HotelRoomService } from '../services';
@@ -57,6 +64,16 @@ export class HotelController {
   @ApiBearerAuth()
   async findOne(@Param('id') id: string) {
     return await this.hotelService.findOne(+id);
+  }
+
+  @Get(':id/availableroom')
+  @ApiParam({ name: 'id' })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getAvailableRoom(
+    @Param('id') id: string,
+    @Query() dto: getAvailableRoomHotelDto,
+  ) {
+    return await this.hotelRoomService.getAvailableRoom(+id, dto);
   }
 
   @Patch(':id')

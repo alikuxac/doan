@@ -14,14 +14,14 @@ import {
   createReservationDto,
   updateReservationDto,
 } from '../dto/reservation.dto';
-import { Reservation } from '../entities';
+// import { Reservation } from '../entities';
 import { HotelService } from '@modules/hotel/services';
-import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
+// import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
 // import { HotelRoomStatus } from '@modules/hotel/enum/hotel_room.enum';
 import { User } from '@modules/user/entities/user.entity';
 import { ReservationRepository } from '../repository/reservations.repository';
 import { HotelRoomRepository } from '@modules/hotel/repository/hotel_room.repository';
-import { ReservationsRoom } from '../entities/reservations_room.entity';
+// import { ReservationsRoom } from '../entities/reservations_room.entity';
 import { ReservationsRoomRepository } from '../repository/reservations_room.repository';
 // import {
 //   createReservationsRoomDto,
@@ -31,11 +31,11 @@ import { ReservationsRoomRepository } from '../repository/reservations_room.repo
 @Injectable()
 export class ReservationsService {
   constructor(
-    @InjectRepository(Reservation)
+    // @InjectRepository(Reservation)
     private readonly reservationRepository: ReservationRepository,
-    @InjectRepository(HotelRoom)
+    // @InjectRepository(HotelRoom)
     private readonly hotelRoomRepository: HotelRoomRepository,
-    @InjectRepository(ReservationsRoom)
+    // @InjectRepository(ReservationsRoom)
     private readonly reservationRoomRepository: ReservationsRoomRepository,
     private readonly hotelService: HotelService,
   ) {}

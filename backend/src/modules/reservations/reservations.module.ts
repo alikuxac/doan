@@ -8,6 +8,8 @@ import { HotelModule } from '@modules/hotel/hotel.module';
 import { BullModule } from '@nestjs/bull';
 import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
 import { ReservationsRoom } from './entities/reservations_room.entity';
+import { reservationRepositoryArrays } from './repository';
+import { HotelRoomRepository } from '@modules/hotel/repository/hotel_room.repository';
 
 @Module({
   imports: [
@@ -18,7 +20,11 @@ import { ReservationsRoom } from './entities/reservations_room.entity';
     HotelModule,
   ],
   controllers: [ReservationsController],
-  providers: [ReservationsService],
+  providers: [
+    ReservationsService,
+    ...reservationRepositoryArrays,
+    HotelRoomRepository,
+  ],
   exports: [ReservationsService],
 })
 export class ReservationsModule {}

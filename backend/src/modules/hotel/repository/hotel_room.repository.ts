@@ -1,8 +1,18 @@
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { HotelRoom } from '../entities/hotel_room.entity';
 import { HotelRoomType } from '../enum/hotel_room.enum';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class HotelRoomRepository extends Repository<HotelRoom> {
+  constructor(private readonly datasource: DataSource) {
+    super(
+      HotelRoom,
+      datasource.createEntityManager(),
+      datasource.createQueryRunner(),
+    );
+  }
+
   async getAllRoomIdsOfHotel(hotelId: number) {
     const roomArray = await this.createQueryBuilder('rooms')
       .where('rooms.hotelId = :id', { id: hotelId })
@@ -28,9 +38,10 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
     const query = await this.createQueryBuilder('rooms')
       .addSelect('rooms.id')
       .innerJoin('rooms.reservation', 'reservation')
+      .innerJoin('rooms.hotel', 'hotel')
       .where('rooms.hotelId = :id', { id: hotelId })
       .andWhere(
-        '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate =< :dateEnd)',
+        '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate <= :dateEnd)',
         { dateStart: checkIn, dateEnd: checkOut },
       );
     if (type) query.andWhere('rooms.type = :type', { type });
@@ -42,7 +53,28 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
     const query = await this.createQueryBuilder('rooms')
       .where('rooms.hotelId = :id', { id: hotelId })
       .where(':number = ANY (rooms.roomNumber)', { number: roomNumber })
-      .getCount()
-    return query
+      .getCount();
+    return query;
+  }
+
+  async checkRoomNumberExist(roomNumbers: number[], hotelId: number) {
+    const count = await this.createQueryBuilder('rooms')
+      .where('rooms.roomNumber && ARRAY[:...numbers]', { numbers: roomNumbers })
+      .andWhere('rooms.hotelId = :id', { id: hotelId })
+      .getCount();
+    return count > 0 ? true : false;
+  }
+
+  async getAvailableRoom(hotelId: number, checkIn: Date, checkOut: Date) {
+    const [rooms, count] = await this.createQueryBuilder('rooms')
+      .innerJoin('rooms.reservationRooms', 'reservationRoom')
+      .innerJoin('reservationRoom.reservation', 'reservation')
+      .where('rooms.hotelId = :id', { id: hotelId })
+      .andWhere(
+        '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate <= :dateEnd)',
+        { dateStart: checkIn, dateEnd: checkOut },
+      )
+      .getManyAndCount();
+    return { rooms, count };
   }
 }

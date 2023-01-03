@@ -1,10 +1,22 @@
-import { BadRequestException, NotAcceptableException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import {
+  BadRequestException,
+  NotAcceptableException,
+  Injectable,
+} from '@nestjs/common';
+import { Repository, DataSource } from 'typeorm';
 import { Reservation } from '../entities';
 // import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
 // import { ReservationsRoom } from '../entities/reservations_room.entity';
 
+@Injectable()
 export class ReservationRepository extends Repository<Reservation> {
+  constructor(private readonly datasource: DataSource) {
+    super(
+      Reservation,
+      datasource.createEntityManager(),
+      datasource.createQueryRunner(),
+    );
+  }
   checkDateValid(checkIn: Date, checkOut) {
     if (checkIn.getTime() < new Date().getTime()) {
       throw new NotAcceptableException('Checkin date must be after now');
@@ -25,7 +37,7 @@ export class ReservationRepository extends Repository<Reservation> {
         .innerJoin('rooms.hotelRoom', 'hotelRoom')
         .addSelect('hotelRoom.id', 'roomId')
         .where(
-          '(reservations.checkInDate >= :dateStart AND reservations.checkOutDate =< :dateEnd)',
+          '(reservations.checkInDate >= :dateStart AND reservations.checkOutDate <= :dateEnd)',
           { dateStart: checkIn, dateEnd: checkOut },
         )
         .andWhere('reservations.isCancelled = :cancel', { cancel: false })
@@ -51,7 +63,7 @@ export class ReservationRepository extends Repository<Reservation> {
         .innerJoinAndSelect('reservations.rooms', 'rooms')
         .innerJoinAndSelect('rooms.hotelRoom', 'hotelRoom')
         .where(
-          '(reservations.checkInDate >= :dateStart AND reservations.checkOutDate =< :dateEnd)',
+          '(reservations.checkInDate >= :dateStart AND reservations.checkOutDate <= :dateEnd)',
           { dateStart: checkIn, dateEnd: checkOut },
         )
         .andWhere('reservations.isCancelled = :cancel', { cancel: false })
