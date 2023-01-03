@@ -98,6 +98,23 @@ const Search: NextPage = () => {
 
   const totalPeople = adult + children;
   const [list, setList] = useState(filterHotelRoom);
+  
+  useEffect(() => {
+    let updatedList = list;
+    if (filterType.length > 0) {
+      updatedList = filterHotelRoom.filter((value) =>
+        filterType.includes(value.type)
+      );
+    } else {
+      updatedList = filterHotelRoom;
+    }
+
+    updatedList = updatedList.filter(
+      (item) => item.price >= price[0] && item.price <= price[1]
+    );
+
+    setList(updatedList);
+  }, [list, filterType, price, filterHotelRoom]);
 
   const chunkedArray = _.chunk(list, 3);
   const chunkedArrayLength = chunkedArray.length;
@@ -112,20 +129,6 @@ const Search: NextPage = () => {
 
   const [disableSelect, setDisableSelect] = useState(false);
 
-  useEffect(() => {
-    let updatedList = list;
-    if (filterType.length > 0) {
-      updatedList = filterHotelRoom.filter((value) =>
-        filterType.includes(value.type)
-      );
-    }
-
-    updatedList = updatedList.filter(
-      (item) => item.price >= price[0] && item.price <= price[1]
-    );
-
-    setList(updatedList)
-  }, [list, filterType, price, filterHotelRoom]);
 
   useEffect(() => {
     const totalSelectRoom = _.sumBy(selectedRoom, function (value) {
@@ -144,7 +147,7 @@ const Search: NextPage = () => {
     } else {
       setDisableSelect(false);
     }
-  }, [selectedRoom, totalRoom, totalPeople, list, filterType, filterHotelRoom]);
+  }, [selectedRoom, totalRoom, totalPeople, list, filterHotelRoom]);
 
   const handlePaginationChange = (e: ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
