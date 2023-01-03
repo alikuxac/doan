@@ -103,12 +103,7 @@ export class UserService {
       .innerJoin('reservation.rooms', 'reservationroom')
       .where('user.id = :id', { id })
       .getMany();
-    const check = await this.userRepository.findOne({
-      where: { id },
-      relations: { reservations: true },
-    });
-    if (!check) throw new BadRequestException('Invalid id');
-    return check;
+    return query;
   }
 
   async update(id: number, dto: updateUserDto) {
