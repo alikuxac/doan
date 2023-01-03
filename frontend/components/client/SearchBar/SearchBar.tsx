@@ -48,9 +48,9 @@ const SearchBar: FC = () => {
       new Date(endDate as Date)
     );
     if (dateCompare === -1) {
-      setIsValidDate(true);
-    } else {
       setIsValidDate(false);
+    } else {
+      setIsValidDate(true);
     }
   }, [startDate, endDate]);
 
@@ -89,7 +89,7 @@ const SearchBar: FC = () => {
   }, [options]);
 
   useEffect(() => {
-    if (!hotel && isValidDate && isValidOptions) {
+    if (!hotel && isValidDate && !isValidOptions) {
       setDisableButton(false);
     }
 
@@ -154,9 +154,9 @@ const SearchBar: FC = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={isValidDate}
+                  error={!isValidDate}
                   helperText={
-                    isValidDate && startDate && endDate
+                    !isValidDate && startDate && endDate
                       ? "Check-in Date must be before check-out Date"
                       : ""
                   }
@@ -177,9 +177,9 @@ const SearchBar: FC = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  error={isValidDate}
+                  error={!isValidDate}
                   helperText={
-                    isValidDate && startDate && endDate
+                    !isValidDate && startDate && endDate
                       ? "Check-out Date must be after check-in Date"
                       : ""
                   }

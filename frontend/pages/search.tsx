@@ -1,75 +1,77 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
+import { useRouter } from "next/router";
 import { useAppSelector, useAppDispatch } from "../hooks/reduxHooks";
-import { selectReservation, setHotel } from "../reducers/reservationSlice";
+import { selectReservation } from "../reducers/reservationSlice";
 import Client from "../layout/Client";
 
 import {
   Box,
   Grid,
   Paper,
-  Autocomplete,
-  TextField,
   Typography,
   Button,
   Slider,
   Select,
+  MenuItem,
+  Card,
+  CardHeader,
+  CardMedia,
+  CardActions,
+  Chip,
+  Pagination,
+  SelectChangeEvent,
+  OutlinedInput,
+  CardContent,
 } from "@mui/material";
 
-import { hotels } from "../data/hotel";
 import { rooms as roomsData } from "../data/rooms";
-import RoomDetails from "../components/client/RoomView/RoomDetails/RoomDetails";
-import { LocalizationProvider, DesktopDatePicker } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { addDays, compareDesc } from "date-fns";
-import { IOptions } from "../interfaces/SearchBar.interface";
-import { setValid } from "../reducers/globalSlice";
 import _ from "lodash";
 import InfoDetails from "../components/client/RoomView/InfoDetails/InfoDetails";
+import { ISelectedRoom } from "../interfaces/Select.interface";
+import { HotelRoom } from "../interfaces/Hotel.interface";
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 const Search: NextPage = () => {
   const dispatch = useAppDispatch();
   const {
-    checkIn,
-    checkOut,
+    hotelId,
     children,
     adult,
-    rooms,
+    rooms: totalRoom,
     hotel: currentHotel,
   } = useAppSelector(selectReservation);
 
-  const [hotel, setHotel] = useState<any>(currentHotel);
-
-  const now = new Date();
-
-  // Date
-  const [startDate, setStartDate] = useState<Date | null>(checkIn); // addDays(now, 1)
-  const [endDate, setEndDate] = useState<Date | null>(checkOut); // addDays(now, 2)
-
-  const [isValidDate, setIsValidDate] = useState<boolean>(false);
-
+  const router = useRouter();
   useEffect(() => {
-    if (!startDate || !endDate) return;
-    const dateCompare = compareDesc(new Date(startDate), new Date(endDate));
-    if (dateCompare === -1) {
-      setIsValidDate(false);
-    } else {
-      setIsValidDate(true);
-    }
-  }, [startDate, endDate]);
+    if (!currentHotel) router.push("/");
+  }, [currentHotel, router]);
 
-  // Options
-  const defaultOptions: IOptions = {
-    adult: adult,
-    children: children,
-    room: rooms,
+  const filterHotelRoom = roomsData.filter((data) => data.hotelId === hotelId);
+
+  // Filter select type
+  const filterType = _.uniq(roomsData.map((data) => data.type));
+  const [filteredType, setFilteredType] = useState<string[]>([]);
+
+  const onSelectTypeChange = (event: SelectChangeEvent<typeof filterType>) => {
+    const {
+      target: { value },
+    } = event;
+    setFilteredType(
+      // On autofill we get a stringified value.
+      typeof value === "string" ? value.split(",") : value
+    );
   };
-  const [options, setOptions] = useState<IOptions>(defaultOptions);
-  const [isChildrenAllowed, setIsChildrenAllowed] = useState<boolean>(false);
-  const [isValidOptions, setIsValidOptions] = useState<boolean>(false);
-
-  // Search button
-  const [disabledButton, setDisableButton] = useState<boolean>(false);
 
   // price range
   const minPriceOfRoom = _.minBy(roomsData, "price");
@@ -94,41 +96,66 @@ const Search: NextPage = () => {
     setPrice(newValue);
   };
 
-  useEffect(() => {
-    if (hotel === currentHotel) return;
-    // dispatch(setHotel({ hotel }));
-    setIsChildrenAllowed(hotel?.noChildren as boolean);
-  }, [dispatch, hotel, currentHotel]);
+  const totalPeople = adult + children;
+  const [list, setList] = useState(filterHotelRoom);
+
+  const chunkedArray = _.chunk(list, 3);
+  const chunkedArrayLength = chunkedArray.length;
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [selectedRoom, setSelectedRoom] = useState<ISelectedRoom[]>(
+    filterHotelRoom.map((value) => {
+      return { id: value.roomId.toString(), value: [] };
+    })
+  );
+
+  const [disableSelect, setDisableSelect] = useState(false);
 
   useEffect(() => {
-    if (isChildrenAllowed) {
-      setOptions((prev) => ({ ...prev, children: 0 }));
+    let updatedList = list;
+    if (filterType.length > 0) {
+      updatedList = filterHotelRoom.filter((value) =>
+        filterType.includes(value.type)
+      );
     }
-  }, [isChildrenAllowed]);
+
+    updatedList = updatedList.filter(
+      (item) => item.price >= price[0] && item.price <= price[1]
+    );
+
+    setList(updatedList)
+  }, [list, filterType, price, filterHotelRoom]);
 
   useEffect(() => {
-    const total = options.adult + options.children;
-    if (options.room > total) {
-      setIsValidOptions(false);
-      dispatch(setValid({ valid: false }));
+    const totalSelectRoom = _.sumBy(selectedRoom, function (value) {
+      return value.value.length;
+    });
+    const selectedOccupancy = _.sumBy(selectedRoom, function (value) {
+      const array = _.find(list, { roomId: +value.id });
+      return value.value.length * array!.maxOccupancy;
+    });
+
+    if (
+      totalSelectRoom >= totalRoom ||
+      (totalPeople <= selectedOccupancy && totalSelectRoom >= totalRoom)
+    ) {
+      setDisableSelect(true);
     } else {
-      setIsValidOptions(true);
+      setDisableSelect(false);
     }
-  }, [dispatch, options]);
+  }, [selectedRoom, totalRoom, totalPeople, list, filterType, filterHotelRoom]);
 
-  useEffect(() => {
-    if (!hotel && isValidDate && isValidOptions) {
-      setDisableButton(false);
-    }
+  const handlePaginationChange = (e: ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
 
-    if (!isValidDate || !isValidOptions || !hotel) {
-      setDisableButton(false);
-    } else {
-      setDisableButton(true);
-    }
-  }, [hotel, isValidDate, isValidOptions]);
+  const isIncludedNumber = (id: string, value: number) => {
+    const array = _.find(selectedRoom, { id });
+    return !array?.value.includes(value) && disableSelect;
+  };
 
-  return (
+  return currentHotel ? (
     <Client>
       <Box sx={{ height: "100%" }}>
         <InfoDetails />
@@ -136,117 +163,41 @@ const Search: NextPage = () => {
           container
           sx={{
             marginBottom: 5,
+            height: "100%",
           }}
           spacing={1}
           justifyContent="space-around"
         >
-          <Grid item xs={4}>
+          <Grid item xs={4} sx={{ height: "100%" }}>
             <Paper
               sx={{
                 margin: 5,
               }}
             >
-              <Typography variant="h6">Info</Typography>
-              <Grid container rowSpacing={2} spacing={1}>
-                <Grid item xs={12}>
-                  <Select></Select>
-                  {/* <Autocomplete
-                    key={"Hotel"}
-                    defaultValue={hotel}
-                    value={hotel}
-                    options={hotels}
-                    getOptionLabel={(option) => option.name}
-                    isOptionEqualToValue={(option, value) =>
-                      option.id === value.id
-                    }
-                    renderInput={(params) => (
-                      <TextField {...params} label="Hotel" />
-                    )}
-                    onChange={(_e, value) => {
-                      setHotel(value);
-                    }}
-                  /> */}
-                </Grid>
-                <Grid item xs={6}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DesktopDatePicker
-                      label="Start date"
-                      value={startDate}
-                      inputFormat="dd/MM/yyyy"
-                      minDate={addDays(now, 1)}
-                      onChange={(value) => setStartDate(value)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={!isValidDate}
-                          // inputProps={{ readOnly: true }}
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={6}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DesktopDatePicker
-                      label="End date"
-                      value={endDate}
-                      inputFormat="dd/MM/yyyy"
-                      minDate={addDays(now, 2)}
-                      onChange={(value) => setEndDate(value)}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          error={!isValidDate}
-                          // inputProps={{ readOnly: true }}
-                        />
-                      )}
-                    />
-                  </LocalizationProvider>
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    type="number"
-                    label="Adult"
-                    value={options.adult}
-                    InputProps={{ inputProps: { min: 1 } }}
-                    error={!isValidOptions}
-                    onChange={(e) =>
-                      setOptions((prev) => ({
-                        ...prev,
-                        adult: +e.target.value,
-                      }))
-                    }
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    type="number"
-                    label="Chilren"
-                    value={options.children}
-                    disabled={isChildrenAllowed}
-                    InputProps={{ inputProps: { min: 0 } }}
-                    onChange={(e) =>
-                      setOptions((prev) => ({
-                        ...prev,
-                        children: +e.target.value,
-                      }))
-                    }
-                  />
-                </Grid>
-                <Grid item xs={4}>
-                  <TextField
-                    type="number"
-                    label="Rooms"
-                    value={options.room}
-                    InputProps={{ inputProps: { min: 1 } }}
-                    error={!isValidOptions}
-                    onChange={(e) =>
-                      setOptions((prev) => ({ ...prev, room: +e.target.value }))
-                    }
-                  />
+              <Grid
+                container
+                rowSpacing={2}
+                spacing={1}
+                sx={{ height: "100%" }}
+              >
+                <Grid item xs={12} sx={{ height: "100%" }}>
+                  <Typography variant="h6">TYPE</Typography>
+                  <Select
+                    value={filteredType}
+                    multiple
+                    onChange={onSelectTypeChange}
+                    input={<OutlinedInput label="Type" />}
+                    sx={{ width: "100%" }}
+                  >
+                    {filterType.map((data) => (
+                      <MenuItem key={data} value={data}>
+                        {data}
+                      </MenuItem>
+                    ))}
+                  </Select>
                 </Grid>
                 <Grid item xs={12} sx={{ padding: 1 }}>
-                  <Typography>Price: </Typography>
+                  <Typography variant="h6">Price</Typography>
                   <Slider
                     value={price}
                     defaultValue={price}
@@ -271,14 +222,107 @@ const Search: NextPage = () => {
               </Grid>
             </Paper>
           </Grid>
-          <Grid item xs={7}>
-            <Paper sx={{ margin: 5 }}>
-              <RoomDetails />
+          <Grid
+            item
+            xs={7}
+            sx={{ justifyContent: "center", alignContent: "center" }}
+          >
+            <Paper sx={{ margin: 5, alignContent: "center" }}>
+              <Grid container spacing={2} justifyContent="center">
+                {chunkedArray[currentPage - 1].map((value, index) => {
+                  return (
+                    <Grid item key={index}>
+                      <Card key={value.roomId} sx={{ height: "100%" }}>
+                        <CardHeader title={value.name} />
+                        <CardMedia
+                          component={"img"}
+                          src={value.photo}
+                          height="150px"
+                        />
+                        <CardContent>{value.type}</CardContent>
+                        <CardActions>
+                          {/* <InputLabel id="select_rooms">Select rooms</InputLabel> */}
+                          <Select
+                            label="Select rooms"
+                            labelId="select_rooms"
+                            multiple
+                            value={
+                              selectedRoom.find(
+                                (selectValue) =>
+                                  selectValue.id === value.roomId.toString()
+                              )?.value
+                            }
+                            onChange={(e) => {
+                              const {
+                                target: { value: currentValue },
+                              } = e;
+
+                              setSelectedRoom((room) =>
+                                room.map((detail) =>
+                                  detail.id === value.roomId.toString()
+                                    ? {
+                                        ...detail,
+                                        value:
+                                          typeof currentValue === "string"
+                                            ? currentValue
+                                                .split(",")
+                                                .map((value) => parseInt(value))
+                                            : currentValue,
+                                      }
+                                    : detail
+                                )
+                              );
+                            }}
+                            renderValue={(selected) => (
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  flexWrap: "wrap",
+                                  gap: 0.5,
+                                }}
+                              >
+                                {selected.map((value) => (
+                                  <Chip key={value} label={value} />
+                                ))}
+                              </Box>
+                            )}
+                            MenuProps={MenuProps}
+                            sx={{ width: "100%" }}
+                          >
+                            {value.roomNumbers.map((name) => (
+                              <MenuItem
+                                key={name}
+                                value={name}
+                                disabled={isIncludedNumber(
+                                  value.roomId.toString(),
+                                  name
+                                )}
+                              >
+                                {name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </CardActions>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+              <Pagination
+                count={chunkedArrayLength}
+                page={currentPage}
+                onChange={handlePaginationChange}
+                showFirstButton
+                showLastButton
+                sx={{ justifyContent: "center", alignContent: "center" }}
+              />
             </Paper>
           </Grid>
         </Grid>
       </Box>
     </Client>
+  ) : (
+    <></>
   );
 };
 

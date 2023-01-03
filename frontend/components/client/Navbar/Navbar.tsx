@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useState } from "react";
+import Link from "next/link";
 import { useAppSelector } from "../../../hooks/reduxHooks";
 import { selectAuth } from "../../../reducers/authSlice";
 
@@ -152,8 +153,10 @@ const Navbar: FC = () => {
               ))} */}
               {isAuthenticated ? (
                 <Container>
-                  <MenuItem key="Profile">Profile</MenuItem>
-                  <MenuItem key="Settings">Settings</MenuItem>
+                  <MenuItem key="Profile">
+                    <Link href={"/profile"}>Profile</Link>
+                  </MenuItem>
+                  <MenuItem key="Booking">Booking</MenuItem>
                   {isAdmin && <MenuItem key="Admin">Admin</MenuItem>}
                   <MenuItem key="Log out">Log out</MenuItem>
                 </Container>

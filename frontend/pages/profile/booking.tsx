@@ -1,12 +1,10 @@
-import { FC } from "react";
-import { format } from "date-fns";
+import type { NextPage } from "next";
 
 import ProtectedLayout from "../../layout/Protected";
 import BookingComp from "../../components/client/Booking";
 import {
   Box,
 } from "@mui/material";
-import { Info as InfoIcon, Visibility as VisibilityIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 const rows = [
   {
@@ -32,7 +30,7 @@ const rows = [
   },
 ];
 
-const Booking: FC = () => {
+const Booking: NextPage = () => {
   return (
     <ProtectedLayout>
       <Box sx={{ marginTop: 1 }}>

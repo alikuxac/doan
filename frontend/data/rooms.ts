@@ -1,4 +1,6 @@
-export const rooms = [
+import { HotelRoom } from "../interfaces/Hotel.interface";
+
+export const rooms: HotelRoom[] = [
   {
     roomId: 1,
     name: "Giường đơn",

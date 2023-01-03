@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { format } from "date-fns";
 import { useAppSelector } from "../../../../hooks/reduxHooks";
 import { selectReservation } from "../../../../reducers/reservationSlice";
@@ -6,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import TypoGraphy from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 
 const titleInfo = (name: string, value: any) => {
   return (
@@ -19,16 +20,25 @@ const titleInfo = (name: string, value: any) => {
   );
 };
 
-const InfoDetails = () => {
+const InfoDetails: FC = () => {
   const { hotel, checkIn, checkOut, adult, children, rooms } =
     useAppSelector(selectReservation);
 
   const checkInDate = format(new Date(checkIn as Date), "dd/MM/yyyy");
   const checkOutDate = format(new Date(checkOut as Date), "dd/MM/yyyy");
   return (
-    <Box alignContent="center" justifyContent={"center"} display="flex" marginTop={5}>
+    <Box
+      alignContent="center"
+      justifyContent={"center"}
+      display="flex"
+      marginTop={5}
+    >
       <List>
-        <ListItem>
+        <ListItem sx={{ display: "flex" }}>
+          {titleInfo(
+            "Hotel: ",
+            hotel ? `${hotel.name} (${hotel.city})` : "None"
+          )}
           <TypoGraphy
             variant="h3"
             sx={{
@@ -36,9 +46,7 @@ const InfoDetails = () => {
               fontSize: "1.25 rem",
             }}
             color="#14226b"
-          >
-            {hotel?.name} ({hotel?.city})
-          </TypoGraphy>
+          ></TypoGraphy>
         </ListItem>
         <ListItem>
           <Stack

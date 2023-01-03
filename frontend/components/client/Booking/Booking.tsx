@@ -17,8 +17,7 @@ import {
 } from "@mui/material";
 import {
   Info as InfoIcon,
-  Visibility as VisibilityIcon,
-  Delete as DeleteIcon,
+  Cancel as CancelIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
 } from "@mui/icons-material";
@@ -79,7 +78,7 @@ function Rows(props: { row: Booking}) {
             <InfoIcon />
           </IconButton>
           <IconButton>
-            <DeleteIcon />
+            <CancelIcon />
           </IconButton>
         </TableCell>
       </TableRow>

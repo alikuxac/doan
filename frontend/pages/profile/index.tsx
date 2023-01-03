@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 
-import Protected from "../layout/Protected";
+import Protected from "../../layout/Protected";
 import {
   Avatar,
   Box,
@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Controller,useForm } from "react-hook-form";
-import register from "./register";
+
 import { useState, useEffect } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from 'yup'
