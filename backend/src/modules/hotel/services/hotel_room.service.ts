@@ -33,7 +33,7 @@ export class HotelRoomService {
       throw new BadRequestException('Invalid hotel');
     }
     if (
-      user.role === UserRole.MANAGER &&
+      user.role.includes(UserRole.MANAGER) &&
       !user.admins.find((hotel) => {
         return hotel.id === hotelId;
       })
@@ -51,7 +51,7 @@ export class HotelRoomService {
 
   async findAll(hotelId: number, user: User, limit = 10, skip = 10) {
     if (
-      user.role === UserRole.MANAGER &&
+      user.role.includes(UserRole.MANAGER) &&
       !user.admins.find((hotel) => {
         return hotel.id === hotelId;
       })
@@ -78,11 +78,11 @@ export class HotelRoomService {
     user: User,
   ) {
     if (
-      (user.role === UserRole.MANAGER &&
+      (user.role.includes(UserRole.MANAGER) &&
         !user.admins.find((hotel) => {
           return hotel.id === hotelId;
         })) ||
-      (user.role === UserRole.USER && !user.isAdmin)
+      (user.role.includes(UserRole.USER) && !user.isAdmin)
     ) {
       throw new BadRequestException(
         'You dont have permission to update this room',
@@ -106,7 +106,7 @@ export class HotelRoomService {
 
   async remove(id: number, hotelId: number, user: User) {
     if (
-      user.role === UserRole.MANAGER &&
+      user.role.includes(UserRole.MANAGER) &&
       !user.admins.find((hotel) => {
         return hotel.id === hotelId;
       })
@@ -130,11 +130,11 @@ export class HotelRoomService {
     user: User,
   ) {
     if (
-      (user.role === UserRole.MANAGER &&
+      (user.role.includes(UserRole.MANAGER) &&
         !user.admins.find((hotel) => {
           return hotel.id === dto.hotelId;
         })) ||
-      (user.role === UserRole.USER && !user.isAdmin)
+      (user.role.includes(UserRole.USER) && !user.isAdmin)
     ) {
       throw new BadRequestException(
         'You dont have permission to update this room',

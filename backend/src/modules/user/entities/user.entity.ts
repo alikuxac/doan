@@ -64,8 +64,8 @@ export class User {
   })
   last_active: Date;
 
-  @Column({ name: 'role', enum: UserRole, default: UserRole.USER })
-  role: UserRole;
+  @Column({ name: 'role', enum: UserRole, default: [UserRole.USER] })
+  role: UserRole[];
 
   @Column({ name: 'isAdmin', type: 'boolean', default: false })
   isAdmin: boolean;

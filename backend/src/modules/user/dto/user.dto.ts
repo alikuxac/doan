@@ -84,14 +84,14 @@ export class updateUserDto extends PartialType(createUserDto) {
 }
 
 export class assignRoleDto {
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, { each: true })
   @IsNotEmpty()
   @ApiPropertyOptional({
     description: 'Role for user',
     enum: UserRole,
     enumName: 'User role',
   })
-  role: UserRole;
+  role: UserRole[];
 }
 
 export class changeHotelDto {

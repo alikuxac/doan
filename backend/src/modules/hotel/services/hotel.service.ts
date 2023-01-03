@@ -12,7 +12,7 @@ export class HotelService {
   constructor(
     // @InjectRepository(Hotel)
     private readonly hotelRepository: HotelRepository,
-  ) {}
+  ) { }
 
   public getHotelRepository() {
     return this.hotelRepository;
@@ -61,7 +61,7 @@ export class HotelService {
 
   async update(id: number, dto: updateHotelDto, user: User) {
     if (
-      user.role === UserRole.MANAGER &&
+      user.role.includes(UserRole.MANAGER) &&
       !user.admins.find((hotel) => hotel.id === id)
     ) {
       throw new BadRequestException('You dont have permission to do this.');

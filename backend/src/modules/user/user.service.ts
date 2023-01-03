@@ -45,7 +45,7 @@ export class UserService {
         firstName: 'admin',
         lastName: 'admin',
         isAdmin: true,
-        role: UserRole.MASTER_MANAGER,
+        role: [UserRole.MASTER_MANAGER],
       });
       return await this.userRepository.save(newUser);
     }
@@ -97,6 +97,12 @@ export class UserService {
   }
 
   async getReservationOfUser(id: number) {
+    const query = await this.userRepository
+      .createQueryBuilder('user')
+      .innerJoin('user.reservations', 'reservations')
+      .innerJoin('reservation.rooms', 'reservationroom')
+      .where('user.id = :id', { id })
+      .getMany();
     const check = await this.userRepository.findOne({
       where: { id },
       relations: { reservations: true },
