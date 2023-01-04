@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../stores';
 import { Hotel } from '../interfaces/Hotel.interface';
-import { ISelectedRoom } from '../components/client/RoomView/RoomDetails/RoomDetails';
+import { ISelectedRoom } from '../interfaces/Select.interface';
 export interface ReservationState {
   checkIn: Date | null,
   checkOut: Date | null,
@@ -62,4 +62,5 @@ export const selectReservation = (state: RootState) => { return {
   rooms: state.reservation.rooms,
   hotelId: state.reservation.hotelId,
   hotel: state.reservation.hotel,
+  roomNumber: state.reservation.roomNumber,
 } };

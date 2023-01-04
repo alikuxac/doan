@@ -1,5 +1,5 @@
 import { FC, Fragment, useState } from "react";
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 
 import {
   Box,
@@ -14,9 +14,15 @@ import {
   Paper,
   IconButton,
   Typography,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  Button,
+  TableFooter,
 } from "@mui/material";
 import {
-  Info as InfoIcon,
   Cancel as CancelIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
   KeyboardArrowDown as KeyboardArrowDownIcon,
@@ -26,37 +32,68 @@ import { Booking } from "../../../interfaces/Booking.interface";
 const rows: Booking[] = [
   {
     id: 1,
-    hotel: "Hi",
+    hotel: "Tâm An",
     checkin: new Date(),
     checkout: new Date(),
     adult: 5,
     children: 0,
-    rooms: 1,
+    rooms: 2,
     details: [
-      { id: 1, name: "Room 1", numbers: [1, 2, 3] },
-      { id: 2, name: "Room 100", numbers: [25, 2, 3] },
+      { id: 4, name: "Giường đôi", numbers: [201] },
+      { id: 5, name: "Giường đơn", numbers: [301] },
     ],
     price: 3000,
+    status: "Paid",
   },
   {
     id: 2,
-    hotel: "aa",
+    hotel: "Việt Tri",
     checkin: new Date(),
     checkout: new Date(),
     adult: 9,
     children: 0,
-    rooms: 1,
-    details: [{ id: 5, name: "Room 2", numbers: [2, 3, 1] }],
+    rooms: 2,
+    details: [
+      { id: 4, name: "Giường đôi", numbers: [301] },
+      { id: 6, name: "Giường đôi", numbers: [401] },
+    ],
     price: 5000,
+    status: "Cancelled",
+  },
+  {
+    id: 3,
+    hotel: "Vần Đào",
+    checkin: new Date(),
+    checkout: new Date(),
+    adult: 2,
+    children: 0,
+    rooms: 1,
+    details: [{ id: 5, name: "Room 2", numbers: [2] }],
+    price: 5000,
+    status: "Cancelled",
   },
 ];
 
-function Rows(props: { row: Booking}) {
+function Rows(props: { row: Booking }) {
   const { row } = props;
   const [open, setOpen] = useState(false);
 
+  const [openCancelDialog, setOpenCancelDialog] = useState(false);
+
   const checkInDate = format(row.checkin, "dd/MM/yyyy");
   const checkOutDate = format(row.checkout, "dd/MM/yyyy");
+
+  const dialogCancelContent = (checkIn: Date, price: number) => {
+    const now = new Date();
+    const day = differenceInDays(now, checkIn);
+    if (day < 3) {
+      return `You won't get money that you paid`;
+    } else if (day >= 3 && day < 7) {
+      return `You will get ${price / 2} VND that you paid`;
+    } else {
+      return `You will get ${price} VND that you paid`;
+    }
+  };
 
   return (
     <Fragment>
@@ -68,18 +105,34 @@ function Rows(props: { row: Booking}) {
         <TableCell>{row.adult}</TableCell>
         <TableCell>{row.children}</TableCell>
         <TableCell>{row.rooms}</TableCell>
+        <TableCell>{row.price * 1000} VND</TableCell>
+        <TableCell>{row.status}</TableCell>
         <TableCell>
           <IconButton size="small" onClick={() => setOpen(!open)}>
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
         <TableCell>
-          <IconButton>
-            <InfoIcon />
-          </IconButton>
-          <IconButton>
+          <IconButton
+            disabled={row.status === "Cancelled"}
+            onClick={() => setOpenCancelDialog(true)}
+          >
             <CancelIcon />
           </IconButton>
+          <Dialog open={openCancelDialog}>
+            <DialogTitle>Are you sure to cancel this reservation?</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                {dialogCancelContent(row.checkin, row.price)}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setOpenCancelDialog(false)}>Cancel</Button>
+              <Button onClick={() => setOpenCancelDialog(false)}>
+                Confirm
+              </Button>
+            </DialogActions>
+          </Dialog>
         </TableCell>
       </TableRow>
       <TableRow>
@@ -120,29 +173,55 @@ function Rows(props: { row: Booking}) {
 }
 
 const Booking: FC = () => {
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
   return (
-    <TableContainer component={Paper}>
-      <Table stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Hotel</TableCell>
-            <TableCell>Check-In Date</TableCell>
-            <TableCell>Check-Out Date</TableCell>
-            <TableCell>Adults</TableCell>
-            <TableCell>Childrens</TableCell>
-            <TableCell>Rooms</TableCell>
-            <TableCell>Details</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((value) => {
-            return <Rows key={value.id} row={value}></Rows>;
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer component={Paper}>
+        <Table stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>Hotel</TableCell>
+              <TableCell>Check-In Date</TableCell>
+              <TableCell>Check-Out Date</TableCell>
+              <TableCell>Adults</TableCell>
+              <TableCell>Childrens</TableCell>
+              <TableCell>Rooms</TableCell>
+              <TableCell>Price</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Details</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((value) => {
+              return <Rows key={value.id} row={value}></Rows>;
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {/* <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={-1}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      /> */}
+    </>
   );
 };
 

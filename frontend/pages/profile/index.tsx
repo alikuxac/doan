@@ -87,7 +87,10 @@ const handleOpenModal = () => setOpen(true);
           />
 
           <Box>
-            <Button variant="outlined">Update avatar</Button>
+            <Button variant="outlined">
+              Update avatar
+              <input hidden accept="image/*" multiple type="file" />
+            </Button>
           </Box>
           <Box>
             <Button variant="outlined" onClick={handleOpenModal}>

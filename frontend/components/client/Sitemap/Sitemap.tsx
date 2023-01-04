@@ -1,13 +1,22 @@
-import { FC } from 'react';
+import { FC } from "react";
 
-import { Typography, Container } from '@mui/material';
+import { Typography, Container } from "@mui/material";
 
 const Sitemap: FC = () => {
   return (
     <Container
-      sx={{ display: "flex", justifyContent: "center", alignContent: "center", position: "fixed", bottom: 0, left: 0 }}
+      maxWidth={false}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignContent: "center",
+        paddingTop: "30px",
+        alignItems: "center",
+        paddingBottom: "30px",
+        backgroundColor: "#231f20",
+      }}
     >
-      <Typography fontSize={"sx"} color="black">
+      <Typography fontSize={"sx"} color="white" sx={{ marginBottom: 0 }}>
         Copyright &copy; 2022 Booking&trade;. All rights reserved.
       </Typography>
     </Container>

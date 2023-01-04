@@ -112,7 +112,7 @@ const SearchBar: FC = () => {
         hotel,
       })
     );
-    router.push('/search', )
+    router.push('/booking', )
   };
 
   return (

@@ -118,6 +118,23 @@ const Register = () => {
                   />
                 )}
               />
+              <Controller
+                name="fullname"
+                control={control}
+                defaultValue=""
+                rules={{
+                  required: "Phone is required",
+                }}
+                render={({ field, fieldState, formState }) => (
+                  <TextField
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    label="Phone number"
+                    error={fieldState.error ? true : false}
+                    helperText={fieldState.error && fieldState.error.message}
+                  />
+                )}
+              />
               <Button type="submit" variant="contained">
                 Register
               </Button>

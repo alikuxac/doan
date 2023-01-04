@@ -47,11 +47,11 @@ export const rooms: HotelRoom[] = [
   },
   {
     roomId: 5,
-    name: "Giường đôi 1",
+    name: "Giường đơn",
     roomNumbers: [301, 302, 306],
     hotelId: 1,
     type: "STUDIO",
-    maxOccupancy: 4,
+    maxOccupancy: 2,
     price: 1000,
     photo:
       "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
@@ -107,6 +107,50 @@ export const rooms: HotelRoom[] = [
     hotelId: 1,
     type: "PRESIDENTIAL",
     maxOccupancy: 4,
+    price: 1000,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    roomId: 11,
+    name: "Giường đơn",
+    roomNumbers: [101, 103, 106],
+    hotelId: 7,
+    type: "SINGLE",
+    maxOccupancy: 5,
+    price: 1000,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    roomId: 12,
+    name: "Giường đơn",
+    roomNumbers: [101, 103, 106],
+    hotelId: 5,
+    type: "SINGLE",
+    maxOccupancy: 4,
+    price: 1000,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    roomId: 13,
+    name: "Giường đơn",
+    roomNumbers: [101, 103, 106],
+    hotelId: 7,
+    type: "SINGLE",
+    maxOccupancy: 5,
+    price: 1000,
+    photo:
+      "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",
+  },
+  {
+    roomId: 14,
+    name: "Giường đơn",
+    roomNumbers: [101, 103, 106],
+    hotelId: 8,
+    type: "SINGLE",
+    maxOccupancy: 5,
     price: 1000,
     photo:
       "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg",

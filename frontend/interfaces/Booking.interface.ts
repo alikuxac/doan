@@ -8,4 +8,5 @@ export interface Booking {
   rooms: number;
   details: Array<{id: number, name: string, numbers: Array<number>}>
   price: number;
+  status: string;
 }
