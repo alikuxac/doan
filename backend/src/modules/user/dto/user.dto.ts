@@ -31,19 +31,10 @@ export class createUserDto {
   @IsNotEmpty()
   @ApiProperty({
     required: true,
-    description: 'First name of user',
-    name: 'firstName',
+    description: 'Full name of user',
+    name: 'fullName',
   })
-  firstName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty({
-    required: true,
-    description: 'Last name of user',
-    name: 'lastName',
-  })
-  lastName: string;
+  fullName: string;
 
   @IsString()
   @IsOptional()
@@ -66,7 +57,7 @@ export class createUserDto {
   @ApiPropertyOptional()
   hotelId?: number;
 
-  @IsEnum(UserRole)
+  @IsEnum(UserRole, { each: true })
   @IsOptional()
   @ApiPropertyOptional({
     description: 'Role for user',
@@ -74,7 +65,7 @@ export class createUserDto {
     enumName: 'User role',
     example: UserRole.USER,
   })
-  role: UserRole;
+  role: UserRole[];
 }
 
 export class updateUserDto extends PartialType(createUserDto) {

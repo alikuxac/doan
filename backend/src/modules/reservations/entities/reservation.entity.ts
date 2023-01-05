@@ -4,9 +4,8 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   JoinColumn,
-  // BeforeInsert,
-  // BeforeUpdate,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,8 +15,8 @@ import { ReservationStatus, PayStatus } from '../reservations.enum';
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import { User } from '@modules/user/entities/user.entity';
 import { Discount } from '@modules/discount/entities/discount.entity';
-// import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
 import { ReservationsRoom } from './reservations_room.entity';
+import { Invoice } from 'src/invoice/entities/invoice.entity';
 
 @Entity({ name: 'reservation' })
 export class Reservation {
@@ -36,14 +35,13 @@ export class Reservation {
   @JoinColumn()
   hotel: Hotel;
 
-  // TODO: Làm xong cơ bản rồi tính tiếp
   @OneToMany(() => ReservationsRoom, (res) => res.reservation, {
     cascade: true,
     onDelete: 'CASCADE',
   })
   rooms: ReservationsRoom[];
 
-  @Column({ name: 'name' })
+  @Column({ name: 'name', comment: 'tên người đặt' })
   name: string;
 
   @Column({ name: 'guest', comment: 'số người lớn' })
@@ -58,6 +56,12 @@ export class Reservation {
   @Column({ name: 'checkOutDate', type: 'date' })
   checkOut: Date;
 
+  @Column({ name: 'room_count', type: 'integer' })
+  roomCount: number;
+
+  @Column({ name: 'price', type: 'float' })
+  price: number;
+
   @Column({ type: 'boolean', default: false })
   isCancelled: boolean;
 
@@ -67,9 +71,6 @@ export class Reservation {
     comment: 'kiểm tra xem đã check in chưa?',
   })
   checkedIn: boolean;
-
-  @Column({ name: 'room_count', type: 'integer' })
-  roomCount: number;
 
   @Column({
     type: 'enum',
@@ -98,6 +99,10 @@ export class Reservation {
   })
   @JoinColumn()
   discount: Discount;
+
+  @OneToOne(() => Invoice, (invoice) => invoice.reservation, { nullable: true })
+  @JoinColumn()
+  invoice: Invoice;
 
   @CreateDateColumn()
   createAt: Date;

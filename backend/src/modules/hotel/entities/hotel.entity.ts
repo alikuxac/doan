@@ -7,7 +7,6 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  Unique,
   Index,
 } from 'typeorm';
 
@@ -22,12 +21,10 @@ export class Hotel {
   id: number;
 
   @Index()
-  @Unique('uq_taxcode', ['taxcode'])
   @Column({ name: 'taxcode', type: 'varchar', length: 25 })
   taxcode: string;
 
   @Column({ name: 'name', length: 100 })
-  @Unique('uq_name', ['name'])
   name: string;
 
   @Column({ name: 'description', length: 255 })

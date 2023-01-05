@@ -29,22 +29,11 @@ export class User {
   })
   email: string;
 
-  @Column({
-    name: 'username',
-    type: 'varchar',
-    length: 50,
-    unique: true,
-  })
-  username: string;
-
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'password', type: 'varchar', length: 100 })
   password: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  firstName: string;
-
-  @Column({ type: 'varchar', length: 100, nullable: false })
-  lastName: string;
+  @Column({ name: 'full_name', type: 'varchar', length: 100 })
+  fullName: string;
 
   @Column({ type: 'varchar', length: 100 })
   displayName: string;
@@ -64,7 +53,13 @@ export class User {
   })
   last_active: Date;
 
-  @Column({ name: 'role', enum: UserRole, default: [UserRole.USER] })
+  @Column({
+    name: 'role',
+    type: 'enum',
+    enum: UserRole,
+    array: true,
+    default: [UserRole.USER],
+  })
   role: UserRole[];
 
   @Column({ name: 'isAdmin', type: 'boolean', default: false })
@@ -116,7 +111,7 @@ export class User {
       this.password = await bcrypt.hash(this.password, 10);
     }
     if (!this.displayName) {
-      this.displayName = this.username;
+      this.displayName = this.email;
     }
     this.last_active = new Date();
   }
@@ -129,6 +124,6 @@ export class User {
   }
 
   get getFullName() {
-    return `${this.firstName} ${this.lastName}`;
+    return `${this.fullName}`;
   }
 }

@@ -4,6 +4,8 @@ import {
   IsString,
   IsDate,
   ValidateNested,
+  IsOptional,
+  IsPhoneNumber,
 } from 'class-validator';
 import { ApiProperty, PartialType, OmitType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -19,9 +21,14 @@ export class createReservationDto {
   hotelId: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @ApiProperty()
   name: string;
+
+  @IsPhoneNumber()
+  @IsOptional()
+  @ApiProperty()
+  phone: string;
 
   @IsDate()
   @IsNotEmpty()
@@ -47,6 +54,16 @@ export class createReservationDto {
   @IsNotEmpty()
   @ApiProperty()
   roomCount: number;
+
+  @IsNumber()
+  @IsOptional()
+  @ApiProperty()
+  userId?: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @ApiProperty()
+  price: number;
 
   @Type(() => createReservationDto)
   @ValidateNested({ each: true })

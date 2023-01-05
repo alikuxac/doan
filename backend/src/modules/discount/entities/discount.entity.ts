@@ -1,10 +1,8 @@
 import {
-  // BeforeInsert,
   Column,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Unique,
   Index,
   Generated,
 } from 'typeorm';
@@ -20,7 +18,6 @@ export class Discount {
   id: number;
 
   @Column({ length: 100, unique: true })
-  @Unique('uq_name', ['name'])
   @Index()
   name: string;
 
@@ -29,7 +26,6 @@ export class Discount {
 
   @Column()
   @Generated('uuid')
-  @Unique('uq_code', ['code'])
   @Index()
   code: string;
 

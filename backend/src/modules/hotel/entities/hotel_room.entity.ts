@@ -30,7 +30,10 @@ export class HotelRoom {
   @Column({ type: 'integer' })
   hotelId: number;
 
-  @ManyToOne(() => Hotel, (hotel) => hotel.rooms, { onDelete: 'RESTRICT' })
+  @ManyToOne(() => Hotel, (hotel) => hotel.rooms, {
+    onDelete: 'RESTRICT',
+    nullable: false,
+  })
   @JoinColumn()
   hotel: Hotel;
 

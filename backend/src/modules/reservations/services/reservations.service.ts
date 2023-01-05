@@ -23,6 +23,7 @@ import { ReservationRepository } from '../repository/reservations.repository';
 import { HotelRoomRepository } from '@modules/hotel/repository/hotel_room.repository';
 // import { ReservationsRoom } from '../entities/reservations_room.entity';
 import { ReservationsRoomRepository } from '../repository/reservations_room.repository';
+import { UserService } from '@modules/user/user.service';
 // import {
 //   createReservationsRoomDto,
 //   updateReservationsRoomDto,
@@ -38,9 +39,10 @@ export class ReservationsService {
     // @InjectRepository(ReservationsRoom)
     private readonly reservationRoomRepository: ReservationsRoomRepository,
     private readonly hotelService: HotelService,
+    private readonly userService: UserService,
   ) {}
 
-  async create(user: User, dto: createReservationDto) {
+  async create(dto: createReservationDto) {
     const { checkIn, checkOut, rooms, hotelId, childrends, roomCount } = dto;
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
@@ -50,6 +52,10 @@ export class ReservationsService {
     await this.reservationRepository.manager.transaction(
       'SERIALIZABLE',
       async (entityManager) => {
+        let user: User | null = null;
+        if (dto.userId) {
+          user = await this.userService.findOne(dto.userId);
+        }
         const hotel = await this.hotelService.findOne(hotelId);
 
         if (childrends > 0 && hotel.noChildren) {
@@ -106,7 +112,6 @@ export class ReservationsService {
 
     checkExist.checkIn = dto.checkIn ?? checkExist.checkIn;
     checkExist.checkOut = dto.checkOut ?? checkExist.checkOut;
-    checkExist.name = dto.name ?? checkExist.name;
     checkExist.childrens = dto.childrends ?? checkExist.childrens;
     checkExist.guests = dto.guests ?? checkExist.guests;
 

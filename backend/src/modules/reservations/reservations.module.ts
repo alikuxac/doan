@@ -10,6 +10,7 @@ import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
 import { ReservationsRoom } from './entities/reservations_room.entity';
 import { reservationRepositoryArrays } from './repository';
 import { HotelRoomRepository } from '@modules/hotel/repository/hotel_room.repository';
+import { UserModule } from '@modules/user/user.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { HotelRoomRepository } from '@modules/hotel/repository/hotel_room.reposi
       name: 'reservations',
     }),
     HotelModule,
+    UserModule,
   ],
   controllers: [ReservationsController],
   providers: [

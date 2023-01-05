@@ -19,6 +19,7 @@ import {
 import { comparePassword } from '@utils/utility';
 import { HotelService } from '@modules/hotel/services';
 import { UserRole } from './user.enum';
+import { signUpDto } from '@modules/auth/dto/auth.dto';
 
 @Injectable()
 export class UserService {
@@ -29,8 +30,8 @@ export class UserService {
   ) {}
 
   async init() {
-    const usename = this.configService.get<string>('ADMIN_USERNAME');
-    const user = await this.findOneByUsername(usename);
+    const usename = this.configService.get<string>('ADMIN_EMAIL');
+    const user = await this.findOneByEmail(usename);
     if (user) {
       if (!user.isAdmin) {
         user.isAdmin = true;
@@ -40,10 +41,8 @@ export class UserService {
     } else {
       const newUser = this.userRepository.create({
         email: this.configService.get<string>('ADMIN_EMAIL'),
-        username: this.configService.get<string>('ADMIN_USERNAME'),
         password: this.configService.get<string>('ADMIN_PASSWORD'),
-        firstName: 'admin',
-        lastName: 'admin',
+        fullName: 'admin',
         isAdmin: true,
         role: [UserRole.MASTER_MANAGER],
       });
@@ -57,11 +56,7 @@ export class UserService {
 
   async create(dto: createUserDto) {
     const checkExist = await this.userRepository.findOne({
-      where: [
-        { email: dto.email },
-        { username: dto.username },
-        { phone: dto.phone ?? null },
-      ],
+      where: [{ email: dto.email }],
     });
     if (checkExist)
       throw new BadRequestException('User with email or username exist');
@@ -69,11 +64,9 @@ export class UserService {
       ? await this.hotelService.findOne(dto.hotelId)
       : null;
     const newUser = this.userRepository.create({
-      username: dto.username,
       phone: dto.phone,
       email: dto.email,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
+      fullName: dto.fullName,
       password: dto.password,
       hotel,
     });
@@ -90,10 +83,6 @@ export class UserService {
 
   async findOneByEmail(email: string) {
     return await this.userRepository.findOne({ where: { email } });
-  }
-
-  async findOneByUsername(username: string) {
-    return await this.userRepository.findOne({ where: { username } });
   }
 
   async getReservationOfUser(id: number) {
@@ -116,8 +105,7 @@ export class UserService {
       {
         email: dto.email ?? checkExist.email,
         phone: dto.phone ?? checkExist.phone,
-        firstName: dto.firstName ?? checkExist.firstName,
-        lastName: dto.lastName ?? checkExist.lastName,
+        fullName: dto.fullName ?? checkExist.fullName,
       },
     );
   }
@@ -163,5 +151,22 @@ export class UserService {
     checkExist.hotel = checkHotelExist;
 
     return await this.userRepository.save(checkExist);
+  }
+
+  async signUp(dto: signUpDto) {
+    const { email, fullname, password, phone } = dto;
+    const checkExist = await this.userRepository.findOne({
+      where: { email: dto.email },
+    });
+    if (!checkExist) {
+      throw new BadRequestException('Email already exist');
+    }
+    const newUser = this.userRepository.create();
+    newUser.email = email;
+    newUser.fullName = fullname;
+    newUser.password = password;
+    newUser.role = [UserRole.USER];
+    newUser.phone = phone;
+    return this.userRepository.save(newUser);
   }
 }

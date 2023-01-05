@@ -19,10 +19,10 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
   async login(dto: loginDto) {
-    const user = await this.authentication(dto.username, dto.password);
+    const user = await this.authentication(dto.email, dto.password);
     if (!user) throw new ForbiddenException('Invalid username or password');
     const payload = {
-      name: user.firstName,
+      name: user.fullName,
       email: user.email,
       id: user.id,
     };
@@ -38,14 +38,14 @@ export class AuthService {
   async signup(dto: signUpDto) {
     const user = await this.userService.findOneByEmail(dto.email);
     if (user) throw new BadRequestException('User already exist');
-    return await this.userService.create(dto);
+    return await this.userService.signUp(dto);
   }
 
   async authentication(username: string, password: string) {
-    const user = await this.userService.findOneByUsername(username);
+    const user = await this.userService.findOneByEmail(username);
     if (!user) return false;
     const checkPass = comparePassword(password, user.password);
-    if (checkPass) return false;
+    if (!checkPass) return false;
     return user;
   }
 }

@@ -18,6 +18,7 @@ import { HotelModule } from './modules/hotel/hotel.module';
 // import { DiscountModule } from './modules/discount/discount.module';
 // import { PaymentsModule } from './modules/payments/payments.module';
 // import { ReviewModule } from './modules/review/review.module';
+import { InvoiceModule } from './invoice/invoice.module';
 
 @Module({
   imports: [
@@ -111,6 +112,7 @@ import { HotelModule } from './modules/hotel/hotel.module';
     // SharedModule,
     ReservationsModule,
     HotelModule,
+    InvoiceModule,
     // FeedbackModule,
     // DiscountModule,
     // PaymentsModule,

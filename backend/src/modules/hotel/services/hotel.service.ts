@@ -12,7 +12,7 @@ export class HotelService {
   constructor(
     // @InjectRepository(Hotel)
     private readonly hotelRepository: HotelRepository,
-  ) { }
+  ) {}
 
   public getHotelRepository() {
     return this.hotelRepository;
@@ -80,9 +80,17 @@ export class HotelService {
   }
 
   async remove(id: number) {
-    const checkExist = await this.hotelRepository.findOne({ where: { id } });
+    const checkExist = await this.hotelRepository.findOne({
+      where: { id },
+      relations: ['rooms'],
+    });
     if (!checkExist) {
       throw new BadRequestException('User not exist');
+    }
+    if (checkExist.rooms.length > 0) {
+      throw new BadRequestException(
+        `You cannot delete this hotel because of room length`,
+      );
     }
     return await this.hotelRepository.delete({ id });
   }
