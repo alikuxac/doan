@@ -188,6 +188,8 @@ const Search: NextPage = () => {
           }}
           spacing={1}
           justifyContent="space-around"
+          alignItems="stretch"
+          alignContent="center"
         >
           <Grid item xs={4} sx={{ height: "100%" }}>
             <Paper

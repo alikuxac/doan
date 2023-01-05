@@ -34,7 +34,7 @@ const Login: NextPage = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
+          padding: "103px 147px"
         }}
       >
         <Card sx={{ padding: "0 120px" }}>

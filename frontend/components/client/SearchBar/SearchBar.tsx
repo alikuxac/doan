@@ -116,7 +116,7 @@ const SearchBar: FC = () => {
   };
 
   return (
-    <Paper sx={{ marginTop: 10 }} elevation={2}>
+    <Paper sx={{ marginTop: 5 }} elevation={8}>
       <Grid
         container
         spacing={2}

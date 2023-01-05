@@ -5,11 +5,11 @@ import Carousel from "react-material-ui-carousel";
 
 import Image from "next/image";
 import { Container, Box, Paper } from "@mui/material";
-import { Slide } from "react-slideshow-image";
 
 import Client from "../layout/Client";
 import SearchBar from "../components/client/SearchBar";
-import Newsletter from "../components/client/Newsletter/Newsletter";
+import BestFeature from "../components/client/BestFeature";
+import Properties from "../components/client/Properties";
 
 const slideImages = [
   {
@@ -44,30 +44,29 @@ const Home: NextPage = () => {
               />
             ))}
           </Carousel>
-          <Box
-            maxWidth="lg"
+          <Container
+            maxWidth={false}
             sx={{
-              width: "100%",
-              margin: "1rem auto",
-              padding: "25px 0 0",
+              backgroundColor: "#848484",
+              display: "flex",
+              alignItems: "center",
+              alignContent: "center",
+              justifyContent: "center",
             }}
           >
-            <SearchBar />
-          </Box>
-
-          {/* <Container>
-            <Box sx={{ my: 2 }}>
-              {[...new Array(20)]
-                .map(
-                  () => `Cras mattis consectetur purus sit amet fermentum.
-Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`
-                )
-                .join("\n")}
+            <Box
+              maxWidth="lg"
+              sx={{
+                width: "100%",
+                margin: "1rem auto",
+                padding: "25px",
+              }}
+            >
+              <SearchBar />
             </Box>
-          </Container> */}
-          <Newsletter />
+          </Container>
+          <Properties />
+          <BestFeature />
         </>
       </Client>
     </Fragment>

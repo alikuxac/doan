@@ -6,15 +6,22 @@ import {
   CardContent,
   CardHeader,
   TextField,
+  InputAdornment,
+  Link,
 } from "@mui/material";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import Link from "next/link";
+// import Link from "next/link";
 import { useAppDispatch } from "../hooks/reduxHooks";
 import { useJwtHook } from "../hooks/useJwtHooks";
 import { login } from "../reducers/authSlice";
-import Navbar from "../components/client/Navbar";
+import Image from "next/image";
 import Client from "../layout/Client";
+
+import EmailIcon from "@mui/icons-material/Email";
+import LockIcon from "@mui/icons-material/Lock";
+import PinIcon from "@mui/icons-material/Pin";
+import PersonIcon from "@mui/icons-material/Person";
 
 const Register = () => {
   const { handleSubmit, control } = useForm();
@@ -40,9 +47,10 @@ const Register = () => {
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
+          flexDirection: "row",
+          alignItems: "stretch",
           justifyContent: "center",
-          height: "100vh",
+          padding: "103px 147px",
         }}
       >
         <Card sx={{ padding: "0 120px" }}>
@@ -76,6 +84,13 @@ const Register = () => {
                     label="Email"
                     error={fieldState.error ? true : false}
                     helperText={fieldState.error && fieldState.error.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <EmailIcon />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 )}
               />
@@ -98,6 +113,13 @@ const Register = () => {
                     type="password"
                     error={fieldState.error ? true : false}
                     helperText={fieldState.error && fieldState.error.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockIcon />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 )}
               />
@@ -115,6 +137,13 @@ const Register = () => {
                     label="Full Name"
                     error={fieldState.error ? true : false}
                     helperText={fieldState.error && fieldState.error.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PersonIcon />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 )}
               />
@@ -132,10 +161,24 @@ const Register = () => {
                     label="Phone number"
                     error={fieldState.error ? true : false}
                     helperText={fieldState.error && fieldState.error.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PinIcon />
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 )}
               />
-              <Button type="submit" variant="contained">
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: "#faa61a",
+                  "&:hover": { backgroundColor: "#000" },
+                }}
+              >
                 Register
               </Button>
             </form>
@@ -156,6 +199,12 @@ const Register = () => {
             </div>
           </CardActions>
         </Card>
+        <Image
+          src="https://cdn.alikuxac.xyz/file/doanali/example/registration.jpg"
+          alt="register"
+          width={650}
+          height={561}
+        />
       </Box>
     </Client>
   );
