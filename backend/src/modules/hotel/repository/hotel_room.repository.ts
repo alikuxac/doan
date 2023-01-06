@@ -86,4 +86,13 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
     }));
     return { rooms: filterRoom, count: filterRoom.length };
   }
+
+  async selectRandomPhotos() {
+    const photos = await this.createQueryBuilder('rooms')
+      .select('rooms.photo')
+      .orderBy('RANDOM()')
+      .limit(3)
+      .getMany();
+    return photos;
+  }
 }

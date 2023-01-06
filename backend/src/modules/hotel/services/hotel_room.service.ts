@@ -170,4 +170,8 @@ export class HotelRoomService {
     );
     return { rooms, count };
   }
+
+  async getRandomPhotos() {
+    return await this.hotelRoomRepository.selectRandomPhotos();
+  }
 }

@@ -57,6 +57,11 @@ export class HotelController {
     return await this.hotelService.getCountByType();
   }
 
+  @Get('randomPhoto')
+  async getRanomPhoto() {
+    return await this.hotelRoomService.getRandomPhotos();
+  }
+
   @Get(':id')
   @ApiParam({ name: 'id' })
   @ApiBearerAuth()
