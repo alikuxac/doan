@@ -101,7 +101,7 @@ export class HotelController {
     return await this.hotelRoomService.getAvailableRoom(+id, dto);
   }
 
-  @Get('room')
+  @Get(':hotelId/room')
   @ApiParam({ name: 'hotelId' })
   @ApiBearerAuth()
   async getAllRoom(@Param('hotelId') hotelId: string) {
