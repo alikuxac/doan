@@ -11,7 +11,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from '@modules/auth/guards/role.guard';
-
+import { User as UserDecor } from './decorator/user.decorator';
+import { User } from './entities/user.entity';
 import { UserService } from './user.service';
 import {
   assignRoleDto,
@@ -43,6 +44,12 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Get('reservations')
+  @Roles(UserRole.USER)
+  async getReservations(@UserDecor() user: User) {
+    return await this.userService.getReservationOfUser(user.id);
+  }
+
   @Get(':id')
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.RECEPTIONIST)
@@ -62,7 +69,7 @@ export class UserController {
 
   @Delete(':id')
   @ApiParam({ name: 'id' })
-  @Roles(UserRole.MANAGER, UserRole.RECEPTIONIST)
+  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   async remove(@Param('id', ParseIntPipe) id: string) {
     return await this.userService.remove(+id);
   }
@@ -85,12 +92,5 @@ export class UserController {
     @Body() dto: changeHotelDto,
   ) {
     return await this.userService.changeHotel(+id, dto);
-  }
-
-  @Get(':id/reservations')
-  @ApiParam({ name: 'id' })
-  @Roles(UserRole.USER)
-  async getReservations(@Param('id', ParseIntPipe) id: string) {
-    return await this.userService.getReservationOfUser(+id);
   }
 }

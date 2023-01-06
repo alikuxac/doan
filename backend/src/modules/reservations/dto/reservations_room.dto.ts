@@ -8,7 +8,7 @@ export class createReservationsRoomDto {
 
   @IsNumber({ allowNaN: false }, { each: true })
   @IsOptional()
-  roomNumbers: number[];
+  roomNumber: number[];
 }
 
 export class updateReservationsRoomDto extends PartialType(

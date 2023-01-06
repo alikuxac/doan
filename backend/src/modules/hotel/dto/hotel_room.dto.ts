@@ -22,7 +22,7 @@ export class createHotelRoomDto {
   @ApiProperty()
   description: string;
 
-  @IsNumber()
+  @IsNumber({ allowNaN: false }, { each: true })
   @IsNotEmpty({ each: true })
   @ApiProperty()
   roomNumber: number[];

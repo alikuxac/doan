@@ -27,7 +27,7 @@ export class ReservationsRoom {
   hotelRoom: HotelRoom;
 
   @Column({ name: 'room_numbers', type: 'integer', comment: 'số phòng chọn' })
-  roomNumbers: number[];
+  roomNumber: number[];
 
   @CreateDateColumn()
   createAt: Date;

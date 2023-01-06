@@ -27,19 +27,21 @@ export class HotelRoomService {
     return checkHotel;
   }
 
-  async create(hotelId: number, dto: createHotelRoomDto, user: User) {
-    const hotel = await this.getHotel(hotelId);
+  async create(dto: createHotelRoomDto, user: User) {
+    const hotel = await this.getHotel(dto.hotelId);
     if (!hotel) {
       throw new BadRequestException('Invalid hotel');
     }
     if (
       user.role.includes(UserRole.MANAGER) &&
       !user.admins.find((hotel) => {
-        return hotel.id === hotelId;
+        return hotel.id === dto.hotelId;
       })
     ) {
       throw new BadRequestException('You dont have permission to create room');
     }
+
+    delete dto.hotelId;
 
     const newRoom = this.hotelRoomRepository.create({
       ...dto,
@@ -49,25 +51,15 @@ export class HotelRoomService {
     return await this.hotelRoomRepository.save(newRoom);
   }
 
-  async findAll(hotelId: number, user: User, limit = 10, skip = 10) {
-    if (
-      user.role.includes(UserRole.MANAGER) &&
-      !user.admins.find((hotel) => {
-        return hotel.id === hotelId;
-      })
-    ) {
-      throw new BadRequestException('You dont have permission to find rooms');
-    }
+  async findAll(hotelId: number) {
     return await this.hotelRoomRepository.find({
       where: { hotelId },
-      take: limit,
-      skip,
     });
   }
 
-  async findOne(id: number, roomId: number) {
+  async findOne(id: number) {
     return await this.hotelRoomRepository.findOne({
-      where: { hotelId: id, id: roomId },
+      where: { id },
     });
   }
 
@@ -105,22 +97,23 @@ export class HotelRoomService {
   }
 
   async remove(id: number, hotelId: number, user: User) {
+    const checkExist = await this.hotelRoomRepository.findOne({
+      where: { id, hotelId },
+    });
+    if (!checkExist) {
+      throw new BadRequestException('Room not exist');
+    }
     if (
       user.role.includes(UserRole.MANAGER) &&
       !user.admins.find((hotel) => {
-        return hotel.id === hotelId;
+        return hotel.id === checkExist.hotelId;
       })
     ) {
       throw new BadRequestException(
         'You dont have permission to delete this room',
       );
     }
-    const checkExist = await this.hotelRoomRepository.findOne({
-      where: { id, hotelId },
-    });
-    if (!checkExist) {
-      throw new BadRequestException('User not exist');
-    }
+
     return await this.hotelRoomRepository.delete({ id });
   }
 
@@ -140,7 +133,7 @@ export class HotelRoomService {
         'You dont have permission to update this room',
       );
     }
-    const checkHotelRoom = await this.findOne(dto.hotelId, id);
+    const checkHotelRoom = await this.findOne(id);
     switch (dto.action) {
       case 'inc':
         const checkRoomNumberExist =
@@ -151,16 +144,14 @@ export class HotelRoomService {
         if (!checkRoomNumberExist) {
           throw new BadRequestException('Room number in this hotel exist');
         }
-        checkHotelRoom.roomNumbers = checkHotelRoom.roomNumbers.concat(
+        checkHotelRoom.roomNumber = checkHotelRoom.roomNumber.concat(
           dto.roomNumber,
         );
         return this.hotelRoomRepository.save(checkHotelRoom);
       case 'dec':
-        checkHotelRoom.roomNumbers = checkHotelRoom.roomNumbers.filter(
-          (room) => {
-            return dto.roomNumber.includes(room);
-          },
-        );
+        checkHotelRoom.roomNumber = checkHotelRoom.roomNumber.filter((room) => {
+          return dto.roomNumber.includes(room);
+        });
         return this.hotelRoomRepository.save(checkHotelRoom);
       default:
         break;

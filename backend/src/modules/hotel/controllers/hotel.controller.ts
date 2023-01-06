@@ -66,16 +66,6 @@ export class HotelController {
     return await this.hotelService.findOne(+id);
   }
 
-  @Get(':id/availableroom')
-  @ApiParam({ name: 'id' })
-  @UsePipes(new ValidationPipe({ transform: true }))
-  async getAvailableRoom(
-    @Param('id') id: string,
-    @Query() dto: getAvailableRoomHotelDto,
-  ) {
-    return await this.hotelRoomService.getAvailableRoom(+id, dto);
-  }
-
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
@@ -98,41 +88,44 @@ export class HotelController {
     return await this.hotelService.remove(+id);
   }
 
-  @Get(':id/room')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiParam({ name: 'hotelId' })
-  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
-  @ApiBearerAuth()
-  async getAllRoom(@UserDecor() user: User, @Param('hotelId') hotelId: string) {
-    return await this.hotelRoomService.findAll(+hotelId, user);
+  @Get(':id/availableroom')
+  @ApiParam({ name: 'id' })
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getAvailableRoom(
+    @Param('id') id: string,
+    @Query() dto: getAvailableRoomHotelDto,
+  ) {
+    return await this.hotelRoomService.getAvailableRoom(+id, dto);
   }
 
-  @Post(':id/room')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('room')
   @ApiParam({ name: 'hotelId' })
+  @ApiBearerAuth()
+  async getAllRoom(@Param('hotelId') hotelId: string) {
+    return await this.hotelRoomService.findAll(+hotelId);
+  }
+
+  @Post('/room')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiBearerAuth()
   async createHotelRoom(
     @UserDecor() user: User,
-    @Param('hotelId') hotelId: string,
     @Body() dto: createHotelRoomDto,
   ) {
-    return await this.hotelRoomService.create(+hotelId, dto, user);
+    return await this.hotelRoomService.create(dto, user);
   }
 
-  @Get(':id/room/:roomId')
+  @Get('/room/:roomId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiBearerAuth()
-  async findOneHotelRoom(
-    @Param('id') hotelId: string,
-    @Param('roomId') roomId: string,
-  ) {
-    return await this.hotelRoomService.findOne(+hotelId, +roomId);
+  async findOneHotelRoom(@Param('roomId') roomId: string) {
+    return await this.hotelRoomService.findOne(+roomId);
   }
 
-  @Patch(':id/room/:roomId')
+  @Patch('/room/:roomId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiParam({ name: 'id' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
@@ -146,7 +139,7 @@ export class HotelController {
     return await this.hotelRoomService.update(+roomId, +hotelId, dto, user);
   }
 
-  @Delete(':id/room/:roomId')
+  @Delete('/room/:roomId')
   @ApiParam({ name: 'id' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)

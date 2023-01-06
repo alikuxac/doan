@@ -79,7 +79,7 @@ export class ReservationsService {
 
           const newRoom = this.reservationRoomRepository.create();
 
-          newRoom.roomNumbers = room.roomNumbers;
+          newRoom.roomNumber = room.roomNumber;
           newRoom.hotelRoom = hotelRoom;
 
           roomArray.push(newRoom);

@@ -21,7 +21,12 @@ export class HotelRoom {
   @Column({ name: 'name', length: 30, nullable: false })
   name: string;
 
-  @Column({ name: 'description', length: 255, type: 'varchar' })
+  @Column({
+    name: 'description',
+    length: 255,
+    type: 'varchar',
+    default: '',
+  })
   description: string;
 
   @Column({ name: 'price', type: 'float' })
@@ -45,8 +50,8 @@ export class HotelRoom {
   })
   type: RoomType;
 
-  @Column({ name: 'bed', type: 'integer' })
-  bed: number;
+  // @Column({ name: 'bed', type: 'integer' })
+  // bed: number;
 
   @Column({ name: 'max_occupancy', type: 'integer', nullable: false })
   maxOccupancy: number;
@@ -60,8 +65,8 @@ export class HotelRoom {
   @Column({ name: 'photo', type: 'varchar' })
   photo: string;
 
-  @Column('integer', { array: true })
-  roomNumbers: number[];
+  @Column('int', { array: true })
+  roomNumber: number[];
 
   @OneToMany(() => ReservationsRoom, (res) => res.hotelRoom)
   reservationRooms: ReservationsRoom[];

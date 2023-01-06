@@ -76,10 +76,10 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
       .getMany();
     const filterRoom = totalRoom.map((value) => ({
       ...value,
-      numbers: value.roomNumbers.filter((filterval) => {
+      numbers: value.roomNumber.filter((filterval) => {
         return !rooms.some((val11) => {
           if (val11.id === value.id) {
-            return val11.roomNumbers.includes(filterval);
+            return val11.roomNumber.includes(filterval);
           }
         });
       }),

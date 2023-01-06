@@ -96,7 +96,9 @@ export class UserService {
       .innerJoin('reservations.rooms', 'reservationroom')
       .where('user.id = :id', { id })
       .getMany();
-    return query;
+    return query.map((value) => {
+      return { reservation: value.reservations };
+    });
   }
 
   async update(id: number, dto: updateUserDto) {
