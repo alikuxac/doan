@@ -100,21 +100,21 @@ export class HotelController {
 
   @Get(':id/room')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiParam({ name: 'hotel id' })
+  @ApiParam({ name: 'hotelId' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiBearerAuth()
-  async getAllRoom(@UserDecor() user: User, @Param('id') hotelId: string) {
+  async getAllRoom(@UserDecor() user: User, @Param('hotelId') hotelId: string) {
     return await this.hotelRoomService.findAll(+hotelId, user);
   }
 
   @Post(':id/room')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiParam({ name: 'hotel id' })
+  @ApiParam({ name: 'hotelId' })
   @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiBearerAuth()
   async createHotelRoom(
     @UserDecor() user: User,
-    @Param('id') hotelId: string,
+    @Param('hotelId') hotelId: string,
     @Body() dto: createHotelRoomDto,
   ) {
     return await this.hotelRoomService.create(+hotelId, dto, user);
