@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsBoolean,
-  IsEnum,
-  IsDate,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsDate } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PartialType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
@@ -35,11 +29,6 @@ export class createHotelDto {
   @IsNotEmpty()
   @ApiProperty()
   country: string;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  @ApiProperty()
-  noChildren: boolean;
 
   @IsEnum(HotelType)
   @IsNotEmpty()

@@ -64,27 +64,15 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
   }
 
   async getAvailableRoom(hotelId: number, checkIn: Date, checkOut: Date) {
-    const totalRoom = await this.getAllRoomIdsOfHotel(hotelId);
     const rooms = await this.createQueryBuilder('rooms')
-      .innerJoin('rooms.reservationRooms', 'reservationRoom')
-      .innerJoin('reservationRoom.reservation', 'reservation')
+      .innerJoin('rooms.reservation', 'reservation')
       .where('rooms.hotelId = :id', { id: hotelId })
       .andWhere(
         '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate <= :dateEnd)',
         { dateStart: checkIn, dateEnd: checkOut },
       )
       .getMany();
-    const filterRoom = totalRoom.map((value) => ({
-      ...value,
-      numbers: value.roomNumber.filter((filterval) => {
-        return !rooms.some((val11) => {
-          if (val11.id === value.id) {
-            return val11.roomNumber.includes(filterval);
-          }
-        });
-      }),
-    }));
-    return { rooms: filterRoom, count: filterRoom.length };
+    return { rooms: rooms, count: rooms.length };
   }
 
   async selectRandomPhotos() {

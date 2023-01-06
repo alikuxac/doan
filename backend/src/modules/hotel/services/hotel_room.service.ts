@@ -1,12 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
 
-import {
-  createHotelRoomDto,
-  updateHotelRoomDto,
-  updateHotelRoomNumberDto,
-} from '../dto/hotel_room.dto';
-// import { HotelRoom } from '../entities/hotel_room.entity';
+import { createHotelRoomDto, updateHotelRoomDto } from '../dto/hotel_room.dto';
 
 import { HotelService } from './hotel.service';
 import { User } from '@modules/user/entities/user.entity';
@@ -16,7 +10,6 @@ import { getAvailableRoomHotelDto } from '../dto/hotel.dto';
 @Injectable()
 export class HotelRoomService {
   constructor(
-    // @InjectRepository(HotelRoom)
     private readonly hotelRoomRepository: HotelRoomRepository,
     private readonly hotelService: HotelService,
   ) {}
@@ -115,47 +108,6 @@ export class HotelRoomService {
     }
 
     return await this.hotelRoomRepository.delete({ id });
-  }
-
-  async updateHotelNumber(
-    id: number,
-    dto: updateHotelRoomNumberDto,
-    user: User,
-  ) {
-    if (
-      (user.role.includes(UserRole.MANAGER) &&
-        !user.admins.find((hotel) => {
-          return hotel.id === dto.hotelId;
-        })) ||
-      (user.role.includes(UserRole.USER) && !user.isAdmin)
-    ) {
-      throw new BadRequestException(
-        'You dont have permission to update this room',
-      );
-    }
-    const checkHotelRoom = await this.findOne(id);
-    switch (dto.action) {
-      case 'inc':
-        const checkRoomNumberExist =
-          await this.hotelRoomRepository.checkRoomNumberExist(
-            dto.roomNumber,
-            dto.hotelId,
-          );
-        if (!checkRoomNumberExist) {
-          throw new BadRequestException('Room number in this hotel exist');
-        }
-        checkHotelRoom.roomNumber = checkHotelRoom.roomNumber.concat(
-          dto.roomNumber,
-        );
-        return this.hotelRoomRepository.save(checkHotelRoom);
-      case 'dec':
-        checkHotelRoom.roomNumber = checkHotelRoom.roomNumber.filter((room) => {
-          return dto.roomNumber.includes(room);
-        });
-        return this.hotelRoomRepository.save(checkHotelRoom);
-      default:
-        break;
-    }
   }
 
   async getAvailableRoom(id: number, dto: getAvailableRoomHotelDto) {

@@ -44,9 +44,6 @@ export class Hotel {
   })
   type: HotelType;
 
-  @Column({ name: 'no_children', type: 'boolean', default: false })
-  noChildren: boolean;
-
   @Column({ nullable: true })
   adminId: number;
 

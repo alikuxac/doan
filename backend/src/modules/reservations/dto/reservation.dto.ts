@@ -3,16 +3,10 @@ import {
   IsNumber,
   IsString,
   IsDate,
-  ValidateNested,
   IsOptional,
   IsPhoneNumber,
 } from 'class-validator';
-import { ApiProperty, PartialType, OmitType } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import {
-  createReservationsRoomDto,
-  updateReservationsRoomDto,
-} from './reservations_room.dto';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 
 export class createReservationDto {
   @IsNumber()
@@ -48,12 +42,7 @@ export class createReservationDto {
   @IsNumber()
   @IsNotEmpty()
   @ApiProperty()
-  childrends: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  @ApiProperty()
-  roomCount: number;
+  roomId: number;
 
   @IsNumber()
   @IsOptional()
@@ -64,16 +53,6 @@ export class createReservationDto {
   @IsNotEmpty()
   @ApiProperty()
   price: number;
-
-  @Type(() => createReservationDto)
-  @ValidateNested({ each: true })
-  rooms: createReservationsRoomDto[];
 }
 
-export class updateReservationDto extends PartialType(
-  OmitType(createReservationDto, ['rooms'] as const),
-) {
-  @Type(() => createReservationDto)
-  @ValidateNested({ each: true })
-  rooms: updateReservationsRoomDto[];
-}
+export class updateReservationDto extends PartialType(createReservationDto) {}

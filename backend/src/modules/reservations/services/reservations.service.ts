@@ -3,47 +3,27 @@ import {
   Injectable,
   NotAcceptableException,
 } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import {
-//   // LessThan,
-//   LessThanOrEqual,
-//   // MoreThan,
-//   MoreThanOrEqual,
-// } from 'typeorm';
 import {
   createReservationDto,
   updateReservationDto,
 } from '../dto/reservation.dto';
-// import { Reservation } from '../entities';
 import { HotelService } from '@modules/hotel/services';
-// import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
-// import { HotelRoomStatus } from '@modules/hotel/enum/hotel_room.enum';
 import { User } from '@modules/user/entities/user.entity';
 import { ReservationRepository } from '../repository/reservations.repository';
 import { HotelRoomRepository } from '@modules/hotel/repository/hotel_room.repository';
-// import { ReservationsRoom } from '../entities/reservations_room.entity';
-import { ReservationsRoomRepository } from '../repository/reservations_room.repository';
 import { UserService } from '@modules/user/user.service';
-// import {
-//   createReservationsRoomDto,
-//   updateReservationsRoomDto,
-// } from '../dto/reservations_room.dto';
 
 @Injectable()
 export class ReservationsService {
   constructor(
-    // @InjectRepository(Reservation)
     private readonly reservationRepository: ReservationRepository,
-    // @InjectRepository(HotelRoom)
     private readonly hotelRoomRepository: HotelRoomRepository,
-    // @InjectRepository(ReservationsRoom)
-    private readonly reservationRoomRepository: ReservationsRoomRepository,
     private readonly hotelService: HotelService,
     private readonly userService: UserService,
   ) {}
 
   async create(dto: createReservationDto) {
-    const { checkIn, checkOut, rooms, hotelId, childrends, roomCount } = dto;
+    const { checkIn, checkOut, hotelId, roomId } = dto;
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
 
@@ -57,10 +37,9 @@ export class ReservationsService {
           user = await this.userService.findOne(dto.userId);
         }
         const hotel = await this.hotelService.findOne(hotelId);
-
-        if (childrends > 0 && hotel.noChildren) {
-          throw new BadRequestException('This hotel is not accept children');
-        }
+        const room = await this.hotelRoomRepository.findOne({
+          where: { id: roomId },
+        });
 
         const newReservation = this.reservationRepository.create({
           checkIn,
@@ -68,25 +47,9 @@ export class ReservationsService {
           hotel,
           name: dto.name,
           user,
+          room,
           checkedIn: false,
         });
-
-        const roomArray = [];
-        for (const room of rooms) {
-          const hotelRoom = await this.hotelRoomRepository.findOne({
-            where: { id: room.roomId },
-          });
-
-          const newRoom = this.reservationRoomRepository.create();
-
-          newRoom.roomNumber = room.roomNumber;
-          newRoom.hotelRoom = hotelRoom;
-
-          roomArray.push(newRoom);
-        }
-
-        newReservation.rooms = roomArray;
-        newReservation.roomCount = roomCount;
 
         return await entityManager.save(newReservation);
       },
@@ -94,15 +57,13 @@ export class ReservationsService {
   }
 
   async findAll() {
-    // TODO: add rooms later
     return await this.reservationRepository.find({ relations: ['rooms'] });
   }
 
   async findOne(id: string) {
     return await this.reservationRepository.findOne({
       where: { id },
-      relations: { rooms: true },
-      //TODO: add room later. code -> relations: { rooms: true },
+      relations: { room: true },
     });
   }
 
@@ -112,7 +73,6 @@ export class ReservationsService {
 
     checkExist.checkIn = dto.checkIn ?? checkExist.checkIn;
     checkExist.checkOut = dto.checkOut ?? checkExist.checkOut;
-    checkExist.childrens = dto.childrends ?? checkExist.childrens;
     checkExist.guests = dto.guests ?? checkExist.guests;
 
     if (checkExist.checkIn.getTime() < new Date().getTime()) {
@@ -124,19 +84,6 @@ export class ReservationsService {
         'Checkin date must be before checkin date',
       );
     }
-
-    // if (dto.rooms.length > 1) {
-    //   for (const room of dto.rooms) {
-    //     const currRoom = await this.reservationRoomRepository.findOneBy({
-    //       id: room.id,
-    //     });
-    //     if (!currRoom) continue;
-    //     currRoom.adults = room.adults ?? currRoom.adults;
-    //     currRoom.bed = room.bed ?? currRoom.bed;
-    //     currRoom.childrens = room.childrens ?? currRoom.childrens;
-    //     currRoom.extra_bed = room.extra_bed ?? currRoom.extra_bed;
-    //   }
-    // }
   }
 
   async remove(id: string) {

@@ -3,7 +3,6 @@ import {
   Column,
   Entity,
   ManyToOne,
-  OneToMany,
   OneToOne,
   JoinColumn,
   CreateDateColumn,
@@ -15,8 +14,8 @@ import { ReservationStatus, PayStatus } from '../reservations.enum';
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import { User } from '@modules/user/entities/user.entity';
 import { Discount } from '@modules/discount/entities/discount.entity';
-import { ReservationsRoom } from './reservations_room.entity';
 import { Invoice } from 'src/invoice/entities/invoice.entity';
+import { HotelRoom } from '@modules/hotel/entities/hotel_room.entity';
 
 @Entity({ name: 'reservation' })
 export class Reservation {
@@ -35,11 +34,9 @@ export class Reservation {
   @JoinColumn()
   hotel: Hotel;
 
-  @OneToMany(() => ReservationsRoom, (res) => res.reservation, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  rooms: ReservationsRoom[];
+  @ManyToOne(() => HotelRoom, (room) => room.reservation)
+  @JoinColumn()
+  room: HotelRoom;
 
   @Column({ name: 'name', comment: 'tên người đặt' })
   name: string;
@@ -47,17 +44,11 @@ export class Reservation {
   @Column({ name: 'guest', comment: 'số người lớn' })
   guests: number;
 
-  @Column({ name: 'children', comment: 'số trẻ em' })
-  childrens: number;
-
   @Column({ name: 'checkInDate', type: 'date' })
   checkIn: Date;
 
   @Column({ name: 'checkOutDate', type: 'date' })
   checkOut: Date;
-
-  @Column({ name: 'room_count', type: 'integer' })
-  roomCount: number;
 
   @Column({ name: 'price', type: 'float' })
   price: number;

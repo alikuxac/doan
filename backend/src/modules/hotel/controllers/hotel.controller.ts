@@ -45,9 +45,6 @@ export class HotelController {
   }
 
   @Get()
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @Roles(UserRole.MASTER_MANAGER)
-  // @ApiBearerAuth()
   async findAll() {
     return await this.hotelService.findAll();
   }

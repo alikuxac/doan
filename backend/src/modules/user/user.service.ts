@@ -93,7 +93,6 @@ export class UserService {
     const query = await this.userRepository
       .createQueryBuilder('user')
       .innerJoin('user.reservations', 'reservations')
-      .innerJoin('reservations.rooms', 'reservationroom')
       .where('user.id = :id', { id })
       .getMany();
     return query.map((value) => {

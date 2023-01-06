@@ -11,14 +11,15 @@ import {
 
 import { Hotel } from '@modules/hotel/entities/hotel.entity';
 import { HotelRoomType as RoomType } from '../enum/hotel_room.enum';
-import { ReservationsRoom } from '@modules/reservations/entities/reservations_room.entity';
+import { Reservation } from '@modules/reservations/entities';
+// import { ReservationsRoom } from '@modules/reservations/entities/reservations_room.entity';
 
 @Entity({ name: 'hotel_room' })
 export class HotelRoom {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ name: 'name', length: 30, nullable: false })
+  @Column({ name: 'name', length: 30 })
   name: string;
 
   @Column({
@@ -50,8 +51,8 @@ export class HotelRoom {
   })
   type: RoomType;
 
-  // @Column({ name: 'bed', type: 'integer' })
-  // bed: number;
+  @Column({ name: 'bed', type: 'integer', default: 1 })
+  bed: number;
 
   @Column({ name: 'max_occupancy', type: 'integer', nullable: false })
   maxOccupancy: number;
@@ -62,14 +63,11 @@ export class HotelRoom {
   @Column({ name: 'available', type: 'boolean', default: true })
   available: boolean;
 
-  @Column({ name: 'photo', type: 'varchar' })
-  photo: string;
+  @Column({ name: 'photo', type: 'varchar', array: true, default: {} })
+  photo: string[];
 
-  @Column('int', { array: true })
-  roomNumber: number[];
-
-  @OneToMany(() => ReservationsRoom, (res) => res.hotelRoom)
-  reservationRooms: ReservationsRoom[];
+  @OneToMany(() => Reservation, (res) => res.room)
+  reservation: Reservation[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -47,10 +47,10 @@ export class createHotelRoomDto {
   @ApiProperty()
   maxOccupancy: number;
 
-  @IsUrl()
+  @IsUrl({}, { each: true })
   @IsNotEmpty()
   @ApiProperty()
-  photo: string;
+  photo: string[];
 }
 
 export class updateHotelRoomDto extends PartialType(
