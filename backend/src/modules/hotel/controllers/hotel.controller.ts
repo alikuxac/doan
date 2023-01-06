@@ -58,8 +58,6 @@ export class HotelController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.MANAGER, UserRole.MASTER_MANAGER)
   @ApiParam({ name: 'id' })
   @ApiBearerAuth()
   async findOne(@Param('id') id: string) {
