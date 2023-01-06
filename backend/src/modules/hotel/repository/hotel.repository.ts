@@ -14,9 +14,9 @@ export class HotelRepository extends Repository<Hotel> {
 
   async countByType() {
     const hotelCount = await this.createQueryBuilder('hotel')
-      .select(['COUNT(hotel.id) as count'])
+      .select(['COUNT(hotel.type) as count', 'hotel.type as type'])
       .addGroupBy('hotel.type')
-      .getRawAndEntities();
+      .getRawMany();
     return hotelCount;
   }
 }

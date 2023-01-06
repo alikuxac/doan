@@ -40,10 +40,9 @@ export class HotelService {
     return await this.hotelRepository.save(newHotel);
   }
 
-  async findAll(limit = 10, skip = 10) {
+  async findAll() {
     const hotels = await this.hotelRepository.find({
-      take: limit,
-      skip,
+      relations: ['rooms'],
     });
     return { hotels };
   }

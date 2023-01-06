@@ -39,7 +39,7 @@ export class createHotelDto {
   @IsBoolean()
   @IsNotEmpty()
   @ApiProperty()
-  noChildren: string;
+  noChildren: boolean;
 
   @IsEnum(HotelType)
   @IsNotEmpty()

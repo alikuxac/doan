@@ -64,7 +64,6 @@ export class Hotel {
 
   @OneToMany(() => HotelRoom, (room) => room.hotel, {
     cascade: true,
-    // eager: true,
     onDelete: 'CASCADE',
   })
   rooms: HotelRoom[];

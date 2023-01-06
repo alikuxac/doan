@@ -86,10 +86,14 @@ export class UserService {
   }
 
   async getReservationOfUser(id: number) {
+    const checkExist = await this.userRepository.findOneBy({ id });
+    if (!checkExist) {
+      throw new BadRequestException('User does not exist');
+    }
     const query = await this.userRepository
       .createQueryBuilder('user')
       .innerJoin('user.reservations', 'reservations')
-      .innerJoin('reservation.rooms', 'reservationroom')
+      .innerJoin('reservations.rooms', 'reservationroom')
       .where('user.id = :id', { id })
       .getMany();
     return query;
