@@ -17,7 +17,6 @@ const NewsLetter: FC = () => {
       <Box
         sx={{
           width: "auto",
-
           justifyContent: "center",
           display: "flex",
           flexDirection: "column",

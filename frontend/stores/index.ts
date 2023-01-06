@@ -1,11 +1,24 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import storage from 'redux-persist/lib/storage'
+import { combineReducers } from "redux";
+import { persistReducer } from 'redux-persist'
 
 import authReducer from '../reducers/authSlice';
 import reservationReducer from '../reducers/reservationSlice';
 import globalReducer from "../reducers/globalSlice";
 
+const combinedReducers = combineReducers({ auth: authReducer, reservation: reservationReducer, global: globalReducer },);
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['auth']
+};
+
+const persistedReducer = persistReducer(persistConfig, combinedReducers);
+
 export const store = configureStore({
-  reducer: { auth: authReducer, reservation: reservationReducer, global: globalReducer },
+  reducer: persistedReducer
 });
 
 export type AppDispatch = typeof store.dispatch;

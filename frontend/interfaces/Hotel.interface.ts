@@ -1,14 +1,17 @@
 export interface Hotel {
   id: number;
+  taxcode: string;
   name: string;
-  city: string;
+  address: string;
+  country: string;
+  type: string;
   noChildren: boolean;
 }
 
 export interface HotelRoom {
-  roomId: number;
+  id: number;
   name: string;
-  roomNumbers: number[];
+  roomNumber: number[];
   hotelId: number;
   type: string;
   maxOccupancy: number,

@@ -11,7 +11,7 @@ export interface IinitialState {
 
 const initialState: IinitialState = {
   user: null,
-  isAuthenticated: true,
+  isAuthenticated: false,
   isAdmin: false,
   token: ""
 };

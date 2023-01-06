@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Link from "next/link";
 
 import {
   Typography,
@@ -70,7 +71,9 @@ const Sitemap: FC = () => {
               COMPANY
             </Typography>
             <List>
-              <ListItem sx={{ color: "white" }}>HOME</ListItem>
+              <ListItem sx={{ color: "white" }}>
+                <Link href={"/"}>HOME</Link>
+              </ListItem>
             </List>
           </StyledContainer>
           <StyledContainer>
@@ -79,10 +82,14 @@ const Sitemap: FC = () => {
             </Typography>
             <List>
               <ListItem sx={{ color: "white" }}>
-                <ListItemText>LOGIN</ListItemText>
+                <ListItemText>
+                  <Link href={"/login"}>LOGIN</Link>
+                </ListItemText>
               </ListItem>
               <ListItem sx={{ color: "white" }}>
-                <ListItemText>SIGN UP</ListItemText>
+                <ListItemText>
+                  <Link href={"/register"}>SIGN UP</Link>
+                </ListItemText>
               </ListItem>
             </List>
           </StyledContainer>

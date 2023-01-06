@@ -3,8 +3,8 @@ import { RootState } from '../stores';
 import { Hotel } from '../interfaces/Hotel.interface';
 import { ISelectedRoom } from '../interfaces/Select.interface';
 export interface ReservationState {
-  checkIn: Date | null,
-  checkOut: Date | null,
+  checkIn: string | null,
+  checkOut: string | null,
   adult: number,
   children: number,
   rooms: number,
@@ -46,11 +46,14 @@ const reservationSlice = createSlice({
       state.rooms = action.payload.rooms;
       state.hotelId = action.payload.hotelId;
       state.hotel = action.payload.hotel
+    },
+    setRoomNumber: (state, action) => {
+      state.roomNumber = action.payload.roomNumber;
     }
   }
 });
 
-export const { setDate, setHotel, setStepOne } = reservationSlice.actions;
+export const { setDate, setHotel, setStepOne, setRoomNumber } = reservationSlice.actions;
 
 export default reservationSlice.reducer;
 

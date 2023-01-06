@@ -3,14 +3,6 @@ import { useAppSelector } from "../../hooks/reduxHooks";
 import { selectReservation } from "../../reducers/reservationSlice";
 import { selectAuth } from "../../reducers/authSlice";
 
-import {
-  PayPalScriptProvider,
-  PayPalButtons,
-  BraintreePayPalButtons,
-  PayPalHostedField,
-  PayPalHostedFieldsProvider,
-  usePayPalHostedFields,
-} from "@paypal/react-paypal-js";
 
 import {
   Box,
@@ -27,30 +19,13 @@ import {
   Stack,
 } from "@mui/material";
 import Client from "../../layout/Client";
-import InfoDetails from "../../components/client/RoomView/InfoDetails/InfoDetails";
+import InfoDetails from "../../components/client/InfoDetails/InfoDetails";
 
 const PreviewBooking: NextPage = () => {
   const { roomNumber } = useAppSelector(selectReservation);
   const { user } = useAppSelector(selectAuth);
-  const hostedFields = usePayPalHostedFields();
-  const submit = () => {
-    if (typeof hostedFields.cardFields!.submit !== "function") return; // validate that `submit()` exists before using it
-    hostedFields
-      .cardFields!.submit({
-        // The full name as shown in the card and billing address
-        cardholderName: "John Wick",
-      })
-      .then((order) => {
-        fetch("/your-server-side-integration-endpoint/capture-payment-info")
-          .then((response) => response.json())
-          .then((data) => {
-            // Inside the data you can find all the information related to the payment
-          })
-          .catch((err) => {
-            // Handle any error
-          });
-      });
-  };
+
+  
   return (
     <Client>
       <Box sx={{ height: "100%" }}>
@@ -125,37 +100,7 @@ const PreviewBooking: NextPage = () => {
                 <Button>Apply</Button>
               </Paper>
               <Paper>
-                <PayPalScriptProvider
-                  options={{
-                    "client-id":
-                      "AWJR3OCbwMt4oMb3mTkbzlNQAN9aF5OIAkvBIicj6kZ7YH604WmJhvozNGzIvi4btNYKaeFRi7bJi7rw",
-                    "data-client-token":
-                      "EFOxmGUI4I8MJP_kgJqTw_ufG5D4GrBUsR5Xqln3usiFAFhBDCzEn5OQkavKIb6Smn00efZCUfWgQAwm",
-                    // components: "hosted-fields,buttons",
-                    // currency: "VND",
-                  }}
-                >
-                  <PayPalButtons
-                    style={{ layout: "horizontal", color: "gold" }}
-                    createOrder={(data, action) => {
-                      return action.order.create({
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: "1000000",
-                              currency_code: "VND",
-                            },
-                          },
-                        ],
-                      });
-                    }}
-                    onApprove={(data, action) => {
-                      return action.order!.capture().then((detail) => {
-                        const name = detail.payer.name;
-                      });
-                    }}
-                  />
-                </PayPalScriptProvider>
+                
               </Paper>
             </Stack>
           </Grid>

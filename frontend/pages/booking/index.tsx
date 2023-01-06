@@ -23,17 +23,19 @@ import {
   SelectChangeEvent,
   OutlinedInput,
   CardContent,
+  Container,
 } from "@mui/material";
 
 import { rooms as roomsData } from "../../data/rooms";
 import _ from "lodash";
-import InfoDetails from "../../components/client/RoomView/InfoDetails/InfoDetails";
+import InfoDetails from "../../components/client/InfoDetails/InfoDetails";
 import { ISelectedRoom } from "../../interfaces/Select.interface";
 import { HotelRoom } from "../../interfaces/Hotel.interface";
+import { useJwtHook } from "../../hooks/useJwtHooks";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const minDistance = 100;
+const minDistance = 10;
 const MenuProps = {
   PaperProps: {
     style: {
@@ -46,8 +48,8 @@ const MenuProps = {
 const valueContent = (value: HotelRoom) => {
   return (
     <>
-      <Typography>Giá tiền: {value.price * 1000}</Typography>
-      <Typography>Loại: {value.type}</Typography>
+      <Typography>Price: {value.price}</Typography>
+      <Typography>Type: {value.type}</Typography>
     </>
   );
 };
@@ -60,17 +62,40 @@ const Search: NextPage = () => {
     adult,
     rooms: totalRoom,
     hotel: currentHotel,
+    roomNumber,
+    checkIn,
+    checkOut,
   } = useAppSelector(selectReservation);
 
+    console.log(roomNumber);
+
   const router = useRouter();
+  const [roomData, setRoomData] = useState<HotelRoom[]>([]);
+
+  console.log(roomData);
+
   useEffect(() => {
-    if (!currentHotel) router.push("/");
+    if (!currentHotel) {
+      router.push("/");
+    } else {
+      const getAvailableRooms = async () => {
+        const response = await useJwtHook.getAvailableRoom(
+          hotelId,
+          new Date(checkIn as string),
+          new Date(checkOut as string)
+        );
+
+        setRoomData(response.data.rooms);
+      };
+      getAvailableRooms();
+    }
   }, [currentHotel, router]);
 
-  const filterHotelRoom = roomsData.filter((data) => data.hotelId === hotelId);
+  const totalPeople = adult + children;
+  const filterHotelRoom = roomData;
 
   // Filter select type
-  const filterType = _.uniq(roomsData.map((data) => data.type));
+  const filterType = _.uniq(roomData.map((data) => data.type));
   const [filteredType, setFilteredType] = useState<string[]>([]);
 
   const onSelectTypeChange = (event: SelectChangeEvent<typeof filterType>) => {
@@ -90,13 +115,6 @@ const Search: NextPage = () => {
     minPriceOfRoom!.price,
     maxPriceOfRoom!.price,
   ]);
-  const marks = [
-    {
-      value: minPriceOfRoom!.price,
-      label: minPriceOfRoom!.price,
-    },
-    { value: maxPriceOfRoom!.price, label: maxPriceOfRoom!.price },
-  ];
 
   const handleSetPriceRange = (
     _event: Event,
@@ -112,8 +130,6 @@ const Search: NextPage = () => {
       setPrice([price[0], Math.max(newValue[1], price[0] + minDistance)]);
     }
   };
-
-  const totalPeople = adult + children;
 
   const filtedList = useMemo(() => {
     let updatedList = filterHotelRoom;
@@ -135,18 +151,29 @@ const Search: NextPage = () => {
 
   const [selectedRoom, setSelectedRoom] = useState<ISelectedRoom[]>(
     filterHotelRoom.map((value) => {
-      return { id: value.roomId.toString(), name: value.name, value: [] };
+      return { id: value.id.toString(), name: value.name, value: [], price: value.price };
     })
   );
 
+  useEffect(() => {
+    if (roomNumber.length > 0) {
+      setSelectedRoom(roomNumber);
+    } 
+  }, []);
+
+
+
+  console.log("selected room: ",selectedRoom);
+
   const [disableSelect, setDisableSelect] = useState(false);
+  const [disableContinue, setDisableContinue] = useState(true);
 
   useEffect(() => {
     const totalSelectRoom = _.sumBy(selectedRoom, function (value) {
       return value.value.length;
     });
     const selectedOccupancy = _.sumBy(selectedRoom, function (value) {
-      const array = _.find(filterHotelRoom, { roomId: +value.id });
+      const array = _.find(filterHotelRoom, { id: +value.id });
       return value.value.length * array!.maxOccupancy;
     });
 
@@ -155,8 +182,10 @@ const Search: NextPage = () => {
       (totalPeople <= selectedOccupancy && totalSelectRoom >= totalRoom)
     ) {
       setDisableSelect(true);
+      setDisableContinue(false);
     } else {
       setDisableSelect(false);
+      setDisableContinue(true);
     }
   }, [selectedRoom, totalRoom, totalPeople, filterHotelRoom]);
 
@@ -169,8 +198,8 @@ const Search: NextPage = () => {
     setPrice([minPriceOfRoom!.price, maxPriceOfRoom!.price]);
   };
 
-  const isIncludedNumber = (id: string, value: number) => {
-    const array = _.find(selectedRoom, { id });
+  const isIncludedNumber = (id: number, value: number) => {
+    const array = _.find(selectedRoom, { id: id.toString() });
     return !array?.value.includes(value) && disableSelect;
   };
 
@@ -178,23 +207,30 @@ const Search: NextPage = () => {
 
   return currentHotel ? (
     <Client>
-      <Box sx={{ height: "100%" }}>
+      <Box sx={{ height: "100%", backgroundColor: "#f5f9fd" }}>
         <InfoDetails />
         <Grid
           container
-          sx={{
-            marginBottom: 5,
-            height: "100%",
-          }}
+          sx={
+            {
+              // marginBottom: 5,
+            }
+          }
           spacing={1}
           justifyContent="space-around"
           alignItems="stretch"
           alignContent="center"
         >
-          <Grid item xs={4} sx={{ height: "100%" }}>
+          <Grid
+            item
+            xs={3}
+            sx={{ height: "100%", paddingTop: 5, marginTop: 2 }}
+          >
             <Paper
               sx={{
                 margin: 5,
+                height: "100%",
+                // backgroundColor: "#6d6d6d",
               }}
             >
               <Grid
@@ -230,9 +266,9 @@ const Search: NextPage = () => {
                       maxPriceOfRoom!.price,
                     ]}
                     onChange={handleSetPriceRange}
-                    valueLabelDisplay="on"
+                    valueLabelDisplay="auto"
                     disableSwap
-                    step={100}
+                    step={10}
                     // marks={marks}
                   />
                 </Grid>
@@ -246,25 +282,47 @@ const Search: NextPage = () => {
                   }}
                 >
                   <Button onClick={handleResetButton}>Reset</Button>
-                  <Button variant="contained">Continue</Button>
+                  <Button variant="contained" disabled={disableContinue}>
+                    Continue
+                  </Button>
                 </Grid>
               </Grid>
             </Paper>
           </Grid>
           <Grid
             item
-            xs={7}
-            sx={{ justifyContent: "center", alignContent: "center" }}
+            xs={8}
+            sx={{
+              justifyContent: "center",
+              alignContent: "center",
+              alignItems: "center",
+              height: "100%",
+            }}
           >
-            <Paper sx={{ margin: 5, alignContent: "center" }}>
+            <Paper
+              sx={{
+                margin: 5,
+                alignContent: "center",
+                height: "100%",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
               {filtedList.length > 0 ? (
-                <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignContent: "center",
+                    justifyContent: "center",
+                  }}
+                >
                   <Grid container spacing={2} justifyContent="center">
                     {filtedList.length > 0 ? (
                       filtedList[currentPage - 1].map((value, index) => {
                         return (
                           <Grid item key={index}>
-                            <Card key={value.roomId} sx={{ height: "100%" }}>
+                            <Card key={value.id} sx={{ height: "100%" }}>
                               <CardHeader title={value.name} />
                               <CardMedia
                                 component={"img"}
@@ -282,7 +340,7 @@ const Search: NextPage = () => {
                                     selectedRoom.find(
                                       (selectValue) =>
                                         selectValue.id ===
-                                        value.roomId.toString()
+                                        value.id.toString()
                                     )?.value
                                   }
                                   onChange={(e) => {
@@ -292,7 +350,7 @@ const Search: NextPage = () => {
 
                                     setSelectedRoom((room) =>
                                       room.map((detail) =>
-                                        detail.id === value.roomId.toString()
+                                        detail.id === value.id.toString()
                                           ? {
                                               ...detail,
                                               value:
@@ -324,12 +382,12 @@ const Search: NextPage = () => {
                                   MenuProps={MenuProps}
                                   sx={{ width: "100%" }}
                                 >
-                                  {value.roomNumbers.map((name) => (
+                                  {value.roomNumber.map((name) => (
                                     <MenuItem
                                       key={name}
                                       value={name}
                                       disabled={isIncludedNumber(
-                                        value.roomId.toString(),
+                                        value.id,
                                         name
                                       )}
                                     >
@@ -354,11 +412,18 @@ const Search: NextPage = () => {
                     showLastButton
                     sx={{ justifyContent: "center", alignContent: "center" }}
                   />
-                </>
+                </Box>
               ) : (
-                <>
-                  <Typography variant="h5">No result found</Typography>
-                </>
+                <Container
+                  sx={{
+                    justifyContent: "center",
+                    alignContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Typography variant="h4">No result found</Typography>
+                </Container>
               )}
             </Paper>
           </Grid>

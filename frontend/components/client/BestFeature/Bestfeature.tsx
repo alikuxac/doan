@@ -1,7 +1,7 @@
-import { FC } from "react";
+import { FC, Component } from "react";
 
 import { Container, Stack, IconButton, Typography } from "@mui/material";
-import { styled } from "@mui/styles";
+import { styled } from "@mui/system";
 
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LockIcon from "@mui/icons-material/Lock";
@@ -23,9 +23,16 @@ const StyledIconButton = styled(IconButton)({
   border: "3px solid #faa61a",
 });
 
-const StyledTypography = styled(Typography)({ fontSize: "30px", color: "white"  });
+const StyledTypography = styled(Typography)({
+  fontSize: "30px",
+  color: "white",
+});
 
-const BestFeature: FC = () => {
+interface BestFeatureProp {
+  array: Array<{ name: string; count: number }>;
+}
+
+const BestFeature: FC<BestFeatureProp> = ({ array }) => {
   return (
     <Container maxWidth={false} sx={{ backgroundColor: "#232323" }}>
       <Stack direction={"row"} justifyContent="space-around">
@@ -43,7 +50,7 @@ const BestFeature: FC = () => {
               sx={{ color: "#faa61a", "&:hover": { color: "black" } }}
             />
           </StyledIconButton>
-          <StyledTypography >Best Price Guarantee</StyledTypography>
+          <StyledTypography>Best Price Guarantee</StyledTypography>
         </StyledContainer>
         <StyledContainer>
           <StyledIconButton
@@ -97,5 +104,7 @@ const BestFeature: FC = () => {
     </Container>
   );
 };
+
+// BestFeature.defaultProps = () => {};+
 
 export default BestFeature;

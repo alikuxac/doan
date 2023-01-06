@@ -50,7 +50,7 @@ const Profile: NextPage = () => {
   }, []);
   useEffect(() => {
     if (user) {
-      setValue("fullname", user.fullname === null ? "" : user.phone);
+      setValue("fullname", user.fullName === null ? "" : user.phone);
       setValue("phone", user.phone === null ? "" : user.phone);
     }
   }, [user, setValue]);
