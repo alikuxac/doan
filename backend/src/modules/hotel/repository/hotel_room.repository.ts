@@ -2,7 +2,6 @@ import { Repository, DataSource } from 'typeorm';
 import { HotelRoom } from '../entities/hotel_room.entity';
 import { HotelRoomType } from '../enum/hotel_room.enum';
 import { Injectable } from '@nestjs/common';
-
 @Injectable()
 export class HotelRoomRepository extends Repository<HotelRoom> {
   constructor(private readonly datasource: DataSource) {
@@ -16,8 +15,7 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
   async getAllRoomIdsOfHotel(hotelId: number) {
     const roomArray = await this.createQueryBuilder('rooms')
       .where('rooms.hotelId = :id', { id: hotelId })
-      .addSelect('rooms.id')
-      .getRawMany<{ id: number }>();
+      .getMany();
     return roomArray;
   }
 
@@ -66,7 +64,8 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
   }
 
   async getAvailableRoom(hotelId: number, checkIn: Date, checkOut: Date) {
-    const [rooms, count] = await this.createQueryBuilder('rooms')
+    const totalRoom = await this.getAllRoomIdsOfHotel(hotelId);
+    const rooms = await this.createQueryBuilder('rooms')
       .innerJoin('rooms.reservationRooms', 'reservationRoom')
       .innerJoin('reservationRoom.reservation', 'reservation')
       .where('rooms.hotelId = :id', { id: hotelId })
@@ -74,7 +73,17 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
         '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate <= :dateEnd)',
         { dateStart: checkIn, dateEnd: checkOut },
       )
-      .getManyAndCount();
-    return { rooms, count };
+      .getMany();
+    const filterRoom = totalRoom.map((value) => ({
+      ...value,
+      numbers: value.roomNumbers.filter((filterval) => {
+        return !rooms.some((val11) => {
+          if (val11.id === value.id) {
+            return val11.roomNumbers.includes(filterval);
+          }
+        });
+      }),
+    }));
+    return { rooms: filterRoom, count: filterRoom.length };
   }
 }
