@@ -14,18 +14,13 @@ export class HotelService {
 
   async create(dto: createHotelDto) {
     const checkExist = await this.hotelRepository.findOne({
-      where: [
-        { taxcode: dto.taxcode },
-        { name: dto.name },
-        { address: dto.address },
-      ],
+      where: [{ name: dto.name }, { address: dto.address }],
     });
     if (checkExist) {
       throw new BadRequestException('Hotel exist');
     }
     const newHotel = this.hotelRepository.create({
       name: dto.name,
-      taxcode: dto.taxcode,
       description: dto.description,
       address: dto.address,
       country: dto.country,
@@ -65,7 +60,6 @@ export class HotelService {
     }
     return await this.hotelRepository.update(id, {
       name: dto.name ?? checkExist.name,
-      taxcode: dto.taxcode ?? checkExist.taxcode,
       address: dto.address ?? checkExist.address,
       description: dto.description ?? checkExist.description,
       country: dto.country ?? checkExist.country,

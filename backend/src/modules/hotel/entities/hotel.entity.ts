@@ -21,10 +21,7 @@ export class Hotel {
   id: number;
 
   @Index()
-  @Column({ name: 'taxcode', type: 'varchar', length: 25 })
-  taxcode: string;
-
-  @Column({ name: 'name', length: 100 })
+  @Column({ name: 'name', length: 100, unique: true })
   name: string;
 
   @Column({ name: 'description', length: 255 })

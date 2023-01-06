@@ -8,11 +8,6 @@ export class createHotelDto {
   @IsString()
   @IsNotEmpty()
   @ApiProperty()
-  taxcode: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
   name: string;
 
   @IsString()
