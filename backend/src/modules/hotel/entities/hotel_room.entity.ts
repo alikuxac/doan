@@ -63,6 +63,9 @@ export class HotelRoom {
   @Column({ name: 'available', type: 'boolean', default: true })
   available: boolean;
 
+  @Column({ type: 'boolean', default: true })
+  allowRefund: boolean;
+
   @Column({ name: 'photo', type: 'varchar', array: true, default: {} })
   photo: string[];
 

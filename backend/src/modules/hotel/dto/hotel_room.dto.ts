@@ -6,8 +6,14 @@ import {
   IsString,
   IsEnum,
   IsUrl,
+  IsBoolean,
 } from 'class-validator';
-import { ApiProperty, OmitType, PickType } from '@nestjs/swagger';
+import {
+  ApiProperty,
+  ApiPropertyOptional,
+  OmitType,
+  PickType,
+} from '@nestjs/swagger';
 
 import { HotelRoomType } from '../enum/hotel_room.enum';
 
@@ -51,6 +57,11 @@ export class createHotelRoomDto {
   @IsNotEmpty()
   @ApiProperty()
   photo: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  allowRefund: boolean;
 }
 
 export class updateHotelRoomDto extends PartialType(
