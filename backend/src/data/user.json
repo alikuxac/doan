@@ -1,0 +1,42 @@
+[
+  {
+    "id": 2,
+    "email": "example1@alikuxac.xyz",
+    "fullName": "user1",
+    "password": "user1",
+    "phone": "0123456789",
+    "role": ["USER"]
+  },
+  {
+    "id": 3,
+    "email": "example2@alikuxac.xyz",
+    "fullName": "user2",
+    "password": "user2",
+    "phone": "0123456789",
+    "role": ["USER"]
+  },
+  {
+    "id": 4,
+    "email": "staff1@alikuxac.xyz",
+    "fullName": "staff1",
+    "password": "staff1",
+    "phone": "0123456789",
+    "role": ["STAFF"]
+  },
+  {
+    "id": 5,
+    "email": "staff2@alikuxac.xyz",
+    "fullName": "staff2",
+    "password": "staff2",
+    "phone": "0123456789",
+    "role": ["STAFF"]
+  },
+  {
+    "id": 4,
+    "email": "manager@alikuxac.xyz",
+    "fullName": "manager",
+    "password": "manager",
+    "phone": "0123456789",
+    "role": ["MANAGER"]
+  }
+]

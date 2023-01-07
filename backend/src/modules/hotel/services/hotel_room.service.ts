@@ -85,6 +85,7 @@ export class HotelRoomService {
     checkHotelRoom.maxOccupancy =
       dto.maxOccupancy ?? checkHotelRoom.maxOccupancy;
     checkHotelRoom.photo = dto.photo ?? checkHotelRoom.photo;
+    checkHotelRoom.allowRefund = dto.allowRefund ?? checkHotelRoom.allowRefund;
 
     return await this.hotelRoomRepository.save(checkHotelRoom);
   }

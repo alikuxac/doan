@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Tâm An",
+    "description": "",
+    "taxcode": "a",
+    "address": "123 abc",
+    "country": "Ho Chi Minh",
+    "noChildren": false,
+    "type": "Hotel"
+  },
+  {
+    "name": "Vân Anh",
+    "description": "",
+    "taxcode": "b",
+    "address": "113 abc",
+    "country": "Ha Noi",
+    "noChildren": true,
+    "type": "Hotel"
+  },
+  {
+    "name": "Côn Đảo",
+    "description": "",
+    "taxcode": "c",
+    "address": "114 abc",
+    "country": "Vũng Tàu",
+    "noChildren": false,
+    "type": "Hotel"
+  },
+  {
+    "name": "Côn Anh",
+    "description": "",
+    "taxcode": "d",
+    "address": "115 abc",
+    "country": "Huế",
+    "noChildren": false,
+    "type": "Villas"
+  },
+  {
+    "name": "Việt Trì",
+    "description": "",
+    "taxcode": "e",
+    "address": "116 abc",
+    "country": "Bắc Giang",
+    "noChildren": true,
+    "type": "Apartment"
+  },
+  {
+    "name": "Ma Cao",
+    "description": "",
+    "taxcode": "f",
+    "address": "117 abc",
+    "country": "Vũng Tàu",
+    "noChildren": false,
+    "type": "Resort"
+  },
+  {
+    "name": "Vân Đào",
+    "description": "",
+    "taxcode": "g",
+    "address": "118 abc",
+    "country": "Bình Dương",
+    "noChildren": false,
+    "type": "Hotel"
+  }
+]

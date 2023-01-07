@@ -65,12 +65,15 @@ export class HotelRoomRepository extends Repository<HotelRoom> {
 
   async getAvailableRoom(hotelId: number, checkIn: Date, checkOut: Date) {
     const rooms = await this.createQueryBuilder('rooms')
+      .addSelect('rooms.*')
       .innerJoin('rooms.reservation', 'reservation')
+      .innerJoin('rooms.hotel', 'hotel')
       .where('rooms.hotelId = :id', { id: hotelId })
-      .andWhere(
-        '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate <= :dateEnd)',
-        { dateStart: checkIn, dateEnd: checkOut },
-      )
+      .printSql()
+      // .andWhere(
+      //   '(reservation.checkInDate >= :dateStart AND reservation.checkOutDate <= :dateEnd)',
+      //   { dateStart: checkIn, dateEnd: checkOut },
+      // )
       .getMany();
     return { rooms: rooms, count: rooms.length };
   }

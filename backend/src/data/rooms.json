@@ -1,0 +1,128 @@
+[
+  {
+    "name": "Single bed 1 person",
+    "roomNumber": [101, 103, 104],
+    "hotelId": 1,
+    "type": "SINGLE",
+    "maxOccupancy": 1,
+    "price": 50,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg"
+  },
+  {
+    "name": "Giường đơn 2 người",
+    "roomNumber": [201, 202, 206],
+    "hotelId": 1,
+    "type": "DOUBLE",
+    "maxOccupancy": 4,
+    "price": 200,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-standart.jpg"
+  },
+  {
+    "name": "Phòng ",
+    "roomNumber": [201, 202, 206],
+    "hotelId": 1,
+    "type": "DOUBLE",
+    "maxOccupancy": 4,
+    "price": 1300,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-suit.jpg"
+  },
+  {
+    "name": "Giường đôi",
+    "roomNumber": [201, 202, 206],
+    "hotelId": 1,
+    "type": "DOUBLE",
+    "maxOccupancy": 4,
+    "price": 2300,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-suit.jpg"
+  },
+  {
+    "name": "Giường đơn",
+    "roomNumber": [301, 302, 306],
+    "hotelId": 1,
+    "type": "STUDIO",
+    "maxOccupancy": 2,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-suit.jpg"
+  },
+  {
+    "name": "Giường đôi",
+    "roomNumber": [401],
+    "hotelId": 1,
+    "type": "PRESIDENTIAL",
+    "maxOccupancy": 4,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-standart.jpg"
+  },
+  {
+    "name": "Giường đôi 2",
+    "roomNumber": [201, 202, 206],
+    "hotelId": 2,
+    "type": "DOUBLE",
+    "maxOccupancy": 6,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg"
+  },
+  {
+    "name": "Giường đôi",
+    "roomNumber": [201, 202, 206],
+    "hotelId": 2,
+    "type": "DOUBLE",
+    "maxOccupancy": 5,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-standart.jpg"
+  },
+  {
+    "name": "Giường đôi 1",
+    "roomNumber": [301, 302, 306],
+    "hotelId": 1,
+    "type": "STUDIO",
+    "maxOccupancy": 4,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg"
+  },
+  {
+    "name": "Giường đôi",
+    "roomNumber": [401],
+    "hotelId": 1,
+    "type": "PRESIDENTIAL",
+    "maxOccupancy": 4,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-standart.jpg"
+  },
+  {
+    "name": "Giường đơn",
+    "roomNumber": [101, 103, 106],
+    "hotelId": 7,
+    "type": "SINGLE",
+    "maxOccupancy": 5,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg"
+  },
+  {
+    "name": "Giường đơn",
+    "roomNumber": [101, 103, 106],
+    "hotelId": 5,
+    "type": "SINGLE",
+    "maxOccupancy": 4,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-suit.jpg"
+  },
+  {
+    "name": "Giường đơn",
+    "roomNumber": [101, 103, 106],
+    "hotelId": 7,
+    "type": "SINGLE",
+    "maxOccupancy": 5,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-suit.jpg"
+  },
+  {
+    "name": "Giường đơn",
+    "roomNumber": [101, 103, 106],
+    "hotelId": 8,
+    "type": "SINGLE",
+    "maxOccupancy": 5,
+    "price": 1000,
+    "photo": "https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/2-suit.jpg"
+  }
+]

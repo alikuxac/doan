@@ -1,0 +1,252 @@
+export const user = [
+  {
+    id: 2,
+    email: 'example1@alikuxac.xyz',
+    username: 'user1',
+    password: 'user1',
+    phone: '0123456789',
+    role: ['USER'],
+  },
+  {
+    id: 3,
+    email: 'example2@alikuxac.xyz',
+    username: 'user2',
+    password: 'user2',
+    phone: '0123456789',
+    role: ['USER'],
+  },
+  {
+    id: 4,
+    email: 'staff1@alikuxac.xyz',
+    username: 'staff1',
+    password: 'staff1',
+    phone: '0123456789',
+    role: ['STAFF'],
+  },
+  {
+    id: 5,
+    email: 'staff2@alikuxac.xyz',
+    username: 'staff2',
+    password: 'staff2',
+    phone: '0123456789',
+    role: ['STAFF'],
+  },
+  {
+    id: 4,
+    email: 'manager@alikuxac.xyz',
+    username: 'manager',
+    password: 'manager',
+    phone: '0123456789',
+    role: ['MANAGER'],
+  },
+];
+
+export const hotels = [
+  {
+    taxcode: 'a',
+    name: 'Tâm An',
+    address: '123 abc',
+    country: 'Ho Chi Minh',
+    noChildren: false,
+    type: 'Hotel',
+  },
+  {
+    name: 'Vân Anh',
+    taxcode: 'b',
+    address: '113 abc',
+    country: 'Ha Noi',
+    noChildren: true,
+    type: 'Hotel',
+  },
+  {
+    name: 'Côn Anh',
+    taxcode: 'b',
+    address: '113 abc',
+    country: 'Bắc Giang',
+    noChildren: false,
+    type: 'Hotel',
+  },
+  {
+    name: 'Côn Đảo',
+    taxcode: 'c',
+    address: '114 abc',
+    country: 'Vũng Tàu',
+    noChildren: false,
+    type: 'Hotel',
+  },
+  {
+    name: 'Côn Anh',
+    taxcode: 'd',
+    address: '115 abc',
+    country: 'Huế',
+    noChildren: false,
+    type: 'Villas',
+  },
+  {
+    name: 'Việt Trì',
+    taxcode: 'e',
+    address: '116 abc',
+    country: 'Bắc Giang',
+    noChildren: true,
+    type: 'Apartment',
+  },
+  {
+    name: 'Ma Cao',
+    taxcode: 'f',
+    address: '117 abc',
+    country: 'Vũng Tàu',
+    noChildren: false,
+    type: 'Resort',
+  },
+  {
+    name: 'Vân Đào',
+    taxcode: 'g',
+    address: '118 abc',
+    country: 'Bình Dương',
+    noChildren: false,
+    type: 'Hotel',
+  },
+];
+
+export const rooms = [
+  {
+    name: 'Single bed 1 person',
+    roomNumbers: [101, 103, 104],
+    hotelId: 1,
+    type: 'SINGLE',
+    maxOccupancy: 1,
+    price: 50,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đơn 2 người',
+    roomNumbers: [201, 202, 206],
+    hotelId: 1,
+    type: 'DOUBLE',
+    maxOccupancy: 4,
+    price: 200,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Phòng ',
+    roomNumbers: [201, 202, 206],
+    hotelId: 1,
+    type: 'DOUBLE',
+    maxOccupancy: 4,
+    price: 1300,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đôi',
+    roomNumbers: [201, 202, 206],
+    hotelId: 1,
+    type: 'DOUBLE',
+    maxOccupancy: 4,
+    price: 2300,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đơn',
+    roomNumbers: [301, 302, 306],
+    hotelId: 1,
+    type: 'STUDIO',
+    maxOccupancy: 2,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đôi',
+    roomNumbers: [401],
+    hotelId: 1,
+    type: 'PRESIDENTIAL',
+    maxOccupancy: 4,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đôi 2',
+    roomNumbers: [201, 202, 206],
+    hotelId: 2,
+    type: 'DOUBLE',
+    maxOccupancy: 6,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đôi',
+    roomNumbers: [201, 202, 206],
+    hotelId: 2,
+    type: 'DOUBLE',
+    maxOccupancy: 5,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đôi 1',
+    roomNumbers: [301, 302, 306],
+    hotelId: 1,
+    type: 'STUDIO',
+    maxOccupancy: 4,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đôi',
+    roomNumbers: [401],
+    hotelId: 1,
+    type: 'PRESIDENTIAL',
+    maxOccupancy: 4,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đơn',
+    roomNumbers: [101, 103, 106],
+    hotelId: 7,
+    type: 'SINGLE',
+    maxOccupancy: 5,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đơn',
+    roomNumbers: [101, 103, 106],
+    hotelId: 5,
+    type: 'SINGLE',
+    maxOccupancy: 4,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đơn',
+    roomNumbers: [101, 103, 106],
+    hotelId: 7,
+    type: 'SINGLE',
+    maxOccupancy: 5,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+  {
+    name: 'Giường đơn',
+    roomNumbers: [101, 103, 106],
+    hotelId: 8,
+    type: 'SINGLE',
+    maxOccupancy: 5,
+    price: 1000,
+    photo:
+      'https://teknasyon-mailling.s3.eu-central-1.amazonaws.com/challenge/frontend/img/1-standart.jpg',
+  },
+];
