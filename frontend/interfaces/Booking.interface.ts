@@ -5,7 +5,6 @@ export interface Booking {
   checkout: Date;
   adult: number;
   children: number;
-  rooms: number;
   details: Array<{id: number, name: string, numbers: Array<number>}>
   price: number;
   status: string;

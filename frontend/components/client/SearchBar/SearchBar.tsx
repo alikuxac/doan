@@ -28,7 +28,7 @@ import HotelIcon from "@mui/icons-material/Hotel";
 import { useJwtHook } from "../../../hooks/useJwtHooks";
 
 interface SearchBarProps {
-  hotels: Hotel[]
+  hotels: Hotel[];
 }
 
 const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
@@ -38,9 +38,7 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
   const {
     checkIn,
     checkOut,
-    children,
-    adult,
-    rooms,
+    
     hotel: currentHotel,
   } = useAppSelector(selectReservation);
 
@@ -58,10 +56,12 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
   const now = new Date();
 
   // Date
-  const [startDate, setStartDate] = useState<Date | null>(checkIn ? new Date(checkIn as string) : null); // addDays(now, 1)
+  const [startDate, setStartDate] = useState<Date | null>(
+    checkIn ? new Date(checkIn as string) : null
+  );
   const [endDate, setEndDate] = useState<Date | null>(
     checkOut ? new Date(checkOut as string) : null
-  ); // addDays(now, 2)
+  );
 
   const [isValidDate, setIsValidDate] = useState<boolean>(false);
 
@@ -78,17 +78,8 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
     }
   }, [startDate, endDate]);
 
-  // Options
-  const defaultOptions: IOptions = {
-    adult: adult,
-    children: children,
-    room: rooms,
-  };
-  const [options, setOptions] = useState<IOptions>(defaultOptions);
+  const [guest, setGuest] = useState(1);
   const [isChildrenAllowed, setIsChildrenAllowed] = useState<boolean>(false);
-  const [isValidOptions, setIsValidOptions] = useState<boolean>(false);
-  const [isTotalHigherThanRoomOne, setIsTotalHigherThanRoomOne] =
-    useState<boolean>(false);
 
   // Search button
   const [disabledButton, setDisableButton] = useState<boolean>(false);
@@ -96,44 +87,22 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
   useEffect(() => {
     if (hotel === currentHotel) return;
     dispatch(setHotel({ hotel }));
-    setIsChildrenAllowed(hotel?.noChildren as boolean);
   }, [dispatch, hotel, currentHotel]);
 
   useEffect(() => {
-    if (isChildrenAllowed) {
-      setOptions((prev) => ({ ...prev, children: 0 }));
-    }
-  }, [isChildrenAllowed]);
-
-  useEffect(() => {
-    const total = options.adult + options.children;
-    if (options.room > total || (total > 4 && options.room === 1)) {
-      setIsValidOptions(false);
-    } else {
-      setIsValidOptions(true);
-    }
-  }, [options]);
-
-  useEffect(() => {
-    if (!hotel && isValidDate && !isValidOptions) {
-      setDisableButton(false);
-    }
-
-    if (!isValidDate || !isValidOptions || !hotel) {
-      setDisableButton(false);
-    } else {
+    if (hotel && startDate && endDate) {
       setDisableButton(true);
+    } else {
+      setDisableButton(false)
     }
-  }, [hotel, isValidDate, isValidOptions]);
+  }, [hotel, startDate, endDate, guest]);
 
   const handleSubmit = () => {
     dispatch(
       setStepOne({
         checkIn: startDate,
         checkOut: endDate,
-        adult: options.adult,
-        children: options.children,
-        rooms: options.room,
+        guest: guest,
         hotelId: hotel.id,
         hotel,
       })
@@ -170,7 +139,7 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
               }}
             />
           </Grid>
-          <Grid item xs={3} sx={{ display: "flex", alignItems: "center" }}>
+          <Grid item xs={4} sx={{ display: "flex", alignItems: "center" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
                 label="Start date"
@@ -195,7 +164,7 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={3} sx={{ display: "flex", alignItems: "center" }}>
+          <Grid item xs={4} sx={{ display: "flex", alignItems: "center" }}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DesktopDatePicker
                 label="End date"
@@ -220,19 +189,19 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
+          <Grid item xs={4} sx={{ display: "flex", alignItems: "center", width: "100&" }}>
             <TextField
               type="number"
-              label="Adult"
-              value={options.adult}
-              InputProps={{ inputProps: { min: 1 } }}
-              error={!isValidOptions}
-              onChange={(e) =>
-                setOptions((prev) => ({ ...prev, adult: +e.target.value }))
-              }
+              label="Guest"
+              value={guest}
+              InputProps={{ inputProps: { min: 1, max: 5 } }}
+              onChange={(e) => {
+                setGuest(+e.target.value);
+              }}
+              sx={{ width: "100%" }}
             />
           </Grid>
-          <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
+          {/* <Grid item xs={2} sx={{ display: "flex", alignItems: "center" }}>
             <TextField
               type="number"
               label="Chilren"
@@ -262,7 +231,7 @@ const SearchBar: FC<SearchBarProps> = ({ hotels }) => {
                 setOptions((prev) => ({ ...prev, room: +e.target.value }))
               }
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={6}>
             {/* Intentionally Empty */}
           </Grid>

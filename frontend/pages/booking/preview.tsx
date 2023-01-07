@@ -22,7 +22,7 @@ import Client from "../../layout/Client";
 import InfoDetails from "../../components/client/InfoDetails/InfoDetails";
 
 const PreviewBooking: NextPage = () => {
-  const { roomNumber } = useAppSelector(selectReservation);
+  const { h } = useAppSelector(selectReservation);
   const { user } = useAppSelector(selectAuth);
 
   

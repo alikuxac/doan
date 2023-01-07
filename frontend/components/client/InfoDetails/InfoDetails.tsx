@@ -22,7 +22,7 @@ const titleInfo = (name: string, value: any) => {
 };
 
 const InfoDetails: FC = () => {
-  const { hotel, checkIn, checkOut, adult, children, rooms } =
+  const { hotel, checkIn, checkOut, guest } =
     useAppSelector(selectReservation);
 
   const checkInDate = format(new Date(checkIn ? checkIn : ""), "dd/MM/yyyy");
@@ -73,9 +73,7 @@ const InfoDetails: FC = () => {
                 spacing={1}
                 sx={{ display: "flex" }}
               >
-                {titleInfo("Adult: ", adult)}
-                {titleInfo("Children: ", children)}
-                {titleInfo("Rooms: ", rooms)}
+                {titleInfo("Guest: ", guest)}
               </Stack>
             </ListItem>
           </List>

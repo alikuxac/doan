@@ -1,9 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import type { NextPage } from "next";
-import { useState, useEffect, ChangeEvent, useMemo } from "react";
+import {
+  useState,
+  useEffect,
+  ChangeEvent,
+  useMemo,
+  useLayoutEffect,
+} from "react";
 import { useRouter } from "next/router";
 import { useAppSelector, useAppDispatch } from "../../hooks/reduxHooks";
 import { selectReservation } from "../../reducers/reservationSlice";
 import Client from "../../layout/Client";
+import Image from "next/image";
 
 import {
   Box,
@@ -14,6 +22,8 @@ import {
   Slider,
   Select,
   MenuItem,
+  Stack,
+  Divider,
   Card,
   CardHeader,
   CardMedia,
@@ -33,6 +43,11 @@ import { ISelectedRoom } from "../../interfaces/Select.interface";
 import { HotelRoom } from "../../interfaces/Hotel.interface";
 import { useJwtHook } from "../../hooks/useJwtHooks";
 
+import PlaceIcon from "@mui/icons-material/Place";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import PersonIcon from "@mui/icons-material/Person";
+import NoBackpackIcon from "@mui/icons-material/NoBackpack";
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const minDistance = 10;
@@ -44,13 +59,100 @@ const MenuProps = {
     },
   },
 };
+const numberPeople = [0, 1, 2, 3, 4];
 
 const valueContent = (value: HotelRoom) => {
   return (
-    <>
-      <Typography>Price: {value.price}</Typography>
-      <Typography>Type: {value.type}</Typography>
-    </>
+    <Paper
+      sx={{
+        margin: 5,
+        alignContent: "space-around",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Box sx={{ display: "flex" }}>
+        <Box>
+          <Image
+            src="https://cdn.alikuxac.xyz/file/doanali/villa.jpeg"
+            alt="g"
+            height={200}
+            width={150}
+          />
+        </Box>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            justifyContent: "left",
+            alignItems: "stretch",
+            alignContent: "space-around",
+            padding: 1,
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: 100 }}>
+            {value.name}
+          </Typography>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+            }}
+          >
+            <PlaceIcon />
+            <Typography variant="h6">{value.extra_bed}</Typography>
+          </Container>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+            }}
+          >
+            <PersonIcon />
+            <Typography variant="h6">
+              {value.maxOccupancy}{" "}
+              {value.maxOccupancy > 1 ? "person" : "people"}
+            </Typography>
+          </Container>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+            }}
+          >
+            <AttachMoneyIcon />
+            <Typography variant="h6">${value.price}</Typography>
+          </Container>
+          <Container
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-start",
+            }}
+          >
+            <NoBackpackIcon />
+            <Typography variant="h6">Non Refundable</Typography>
+          </Container>
+        </Box>
+        <Divider orientation="vertical" flexItem />
+        <Box
+          sx={{
+            alignItems: "center",
+            justifyContent: "center",
+            display: "flex",
+          }}
+        >
+          <Button variant="contained" sx={{ padding: 1, m: 2 }}>
+            Order now
+          </Button>
+        </Box>
+      </Box>
+    </Paper>
   );
 };
 
@@ -58,41 +160,36 @@ const Search: NextPage = () => {
   const dispatch = useAppDispatch();
   const {
     hotelId,
-    children,
-    adult,
-    rooms: totalRoom,
+    guest,
     hotel: currentHotel,
-    roomNumber,
     checkIn,
     checkOut,
   } = useAppSelector(selectReservation);
 
-    console.log(roomNumber);
-
   const router = useRouter();
   const [roomData, setRoomData] = useState<HotelRoom[]>([]);
 
-  console.log(roomData);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!currentHotel) {
       router.push("/");
-    } else {
-      const getAvailableRooms = async () => {
-        const response = await useJwtHook.getAvailableRoom(
-          hotelId,
-          new Date(checkIn as string),
-          new Date(checkOut as string)
-        );
-
-        setRoomData(response.data.rooms);
-      };
-      getAvailableRooms();
     }
   }, [currentHotel, router]);
 
-  const totalPeople = adult + children;
+  useLayoutEffect(() => {
+    const getdata = async () => {
+      const response = await useJwtHook.getAvailableRoom(
+        +hotelId,
+        new Date(checkIn as string),
+        new Date(checkOut as string)
+      );
+      setRoomData(response.data.rooms);
+    };
+    getdata();
+  }, []);
+
   const filterHotelRoom = roomData;
+
+  const [filteredPeople, setFilteredPeople] = useState(0);
 
   // Filter select type
   const filterType = _.uniq(roomData.map((data) => data.type));
@@ -138,6 +235,13 @@ const Search: NextPage = () => {
       ? filterHotelRoom.filter((value) => filteredType.includes(value.type))
       : filterHotelRoom;
 
+    updatedList =
+      filteredPeople !== 0
+        ? filterHotelRoom.filter(
+            (value) => value.maxOccupancy === filteredPeople
+          )
+        : filterHotelRoom;
+
     updatedList = updatedList.filter(
       (item) => item.price >= price[0] && item.price <= price[1]
     );
@@ -149,46 +253,6 @@ const Search: NextPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [selectedRoom, setSelectedRoom] = useState<ISelectedRoom[]>(
-    filterHotelRoom.map((value) => {
-      return { id: value.id.toString(), name: value.name, value: [], price: value.price };
-    })
-  );
-
-  useEffect(() => {
-    if (roomNumber.length > 0) {
-      setSelectedRoom(roomNumber);
-    } 
-  }, []);
-
-
-
-  console.log("selected room: ",selectedRoom);
-
-  const [disableSelect, setDisableSelect] = useState(false);
-  const [disableContinue, setDisableContinue] = useState(true);
-
-  useEffect(() => {
-    const totalSelectRoom = _.sumBy(selectedRoom, function (value) {
-      return value.value.length;
-    });
-    const selectedOccupancy = _.sumBy(selectedRoom, function (value) {
-      const array = _.find(filterHotelRoom, { id: +value.id });
-      return value.value.length * array!.maxOccupancy;
-    });
-
-    if (
-      totalSelectRoom >= totalRoom ||
-      (totalPeople <= selectedOccupancy && totalSelectRoom >= totalRoom)
-    ) {
-      setDisableSelect(true);
-      setDisableContinue(false);
-    } else {
-      setDisableSelect(false);
-      setDisableContinue(true);
-    }
-  }, [selectedRoom, totalRoom, totalPeople, filterHotelRoom]);
-
   const handlePaginationChange = (e: ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
   };
@@ -196,11 +260,6 @@ const Search: NextPage = () => {
   const handleResetButton = () => {
     setFilteredType([]);
     setPrice([minPriceOfRoom!.price, maxPriceOfRoom!.price]);
-  };
-
-  const isIncludedNumber = (id: number, value: number) => {
-    const array = _.find(selectedRoom, { id: id.toString() });
-    return !array?.value.includes(value) && disableSelect;
   };
 
   const handleSumbit = () => {};
@@ -230,7 +289,6 @@ const Search: NextPage = () => {
               sx={{
                 margin: 5,
                 height: "100%",
-                // backgroundColor: "#6d6d6d",
               }}
             >
               <Grid
@@ -255,6 +313,25 @@ const Search: NextPage = () => {
                     ))}
                   </Select>
                 </Grid>
+                <Grid item xs={12}>
+                  <Typography variant="h6">Max People</Typography>
+                  <Select
+                    value={filteredPeople}
+                    onChange={(e) => setFilteredPeople(+e.target.value)}
+                    input={
+                      <OutlinedInput
+                        label="Max People"
+                        sx={{ width: "100%" }}
+                      />
+                    }
+                  >
+                    {numberPeople.map((data) => (
+                      <MenuItem key={data} value={data}>
+                        {data}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
                 <Grid item xs={12} sx={{ padding: 1, margin: 1 }}>
                   <Typography variant="h6">Price</Typography>
                   <Slider
@@ -272,6 +349,7 @@ const Search: NextPage = () => {
                     // marks={marks}
                   />
                 </Grid>
+
                 <Grid
                   item
                   xs
@@ -282,9 +360,6 @@ const Search: NextPage = () => {
                   }}
                 >
                   <Button onClick={handleResetButton}>Reset</Button>
-                  <Button variant="contained" disabled={disableContinue}>
-                    Continue
-                  </Button>
                 </Grid>
               </Grid>
             </Paper>
@@ -296,136 +371,42 @@ const Search: NextPage = () => {
               justifyContent: "center",
               alignContent: "center",
               alignItems: "center",
-              height: "100%",
+              display: "flex",
             }}
           >
-            <Paper
-              sx={{
-                margin: 5,
-                alignContent: "center",
-                height: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {filtedList.length > 0 ? (
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignContent: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Grid container spacing={2} justifyContent="center">
-                    {filtedList.length > 0 ? (
-                      filtedList[currentPage - 1].map((value, index) => {
-                        return (
-                          <Grid item key={index}>
-                            <Card key={value.id} sx={{ height: "100%" }}>
-                              <CardHeader title={value.name} />
-                              <CardMedia
-                                component={"img"}
-                                src={value.photo}
-                                height="150px"
-                              />
-                              <CardContent>{valueContent(value)}</CardContent>
-                              <CardActions>
-                                {/* <InputLabel id="select_rooms">Select rooms</InputLabel> */}
-                                <Select
-                                  label="Select rooms"
-                                  labelId="select_rooms"
-                                  multiple
-                                  value={
-                                    selectedRoom.find(
-                                      (selectValue) =>
-                                        selectValue.id ===
-                                        value.id.toString()
-                                    )?.value
-                                  }
-                                  onChange={(e) => {
-                                    const {
-                                      target: { value: currentValue },
-                                    } = e;
-
-                                    setSelectedRoom((room) =>
-                                      room.map((detail) =>
-                                        detail.id === value.id.toString()
-                                          ? {
-                                              ...detail,
-                                              value:
-                                                typeof currentValue === "string"
-                                                  ? currentValue
-                                                      .split(",")
-                                                      .map((value) =>
-                                                        parseInt(value)
-                                                      )
-                                                  : currentValue,
-                                            }
-                                          : detail
-                                      )
-                                    );
-                                  }}
-                                  renderValue={(selected) => (
-                                    <Box
-                                      sx={{
-                                        display: "flex",
-                                        flexWrap: "wrap",
-                                        gap: 0.5,
-                                      }}
-                                    >
-                                      {selected.map((value) => (
-                                        <Chip key={value} label={value} />
-                                      ))}
-                                    </Box>
-                                  )}
-                                  MenuProps={MenuProps}
-                                  sx={{ width: "100%" }}
-                                >
-                                  {value.roomNumber.map((name) => (
-                                    <MenuItem
-                                      key={name}
-                                      value={name}
-                                      disabled={isIncludedNumber(
-                                        value.id,
-                                        name
-                                      )}
-                                    >
-                                      {name}
-                                    </MenuItem>
-                                  ))}
-                                </Select>
-                              </CardActions>
-                            </Card>
-                          </Grid>
-                        );
-                      })
-                    ) : (
-                      <></>
-                    )}
-                  </Grid>
-                  <Pagination
-                    count={chunkedArrayLength}
-                    page={currentPage}
-                    onChange={handlePaginationChange}
-                    showFirstButton
-                    showLastButton
-                    sx={{ justifyContent: "center", alignContent: "center" }}
-                  />
-                </Box>
-              ) : (
-                <Container
-                  sx={{
-                    justifyContent: "center",
-                    alignContent: "center",
-                    alignItems: "center",
-                    display: "flex",
-                  }}
-                >
-                  <Typography variant="h4">No result found</Typography>
-                </Container>
-              )}
-            </Paper>
+            {filtedList.length > 0 ? (
+              <Container
+                sx={{
+                  justifyContent: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Stack>
+                  {filtedList[currentPage - 1].map((value) =>
+                    valueContent(value)
+                  )}
+                </Stack>
+                <Pagination
+                  count={chunkedArrayLength}
+                  page={currentPage}
+                  onChange={handlePaginationChange}
+                  showFirstButton
+                  showLastButton
+                  sx={{ justifyContent: "center", alignContent: "center" }}
+                />
+              </Container>
+            ) : (
+              <Paper
+                sx={{
+                  justifyContent: "center",
+                  alignContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h4">No result found</Typography>
+              </Paper>
+            )}
           </Grid>
         </Grid>
       </Box>
